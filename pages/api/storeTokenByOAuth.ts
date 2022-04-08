@@ -1,34 +1,36 @@
 import axios, { AxiosResponse } from "axios";
-import { NextApiResponse } from "next";
+import { url } from "inspector";
+import { NextApiRequest, NextApiResponse } from "next";
 import { apiConfig } from "../../config";
 import { decryptToken, encryptToken } from "../../utils/oauth";
+
+import Redis from "ioredis";
+import { storeOdAuthTokens } from "../../utils/oauth/storeTokenToRedis";
+
+const kv = new Redis(process.env.REDIS_URL);
 
 // // function isString(test: any): test is string{
 // function isError (result: any): result is Error {
 //   return "error" in result
 // }
 
-export default async function handler(req, res: NextApiResponse) {
-  const { clientId, redirectUri, authApi } = apiConfig;
-  const clientSecret = decryptToken(
-    "OGFjMTViY2U5ZWU3MjkwZWUxZGQ0MWFkMjNlYmM0ZDY3MDQ0ODg3ZDlmZWU2YjU2NGQ3YjkyODk0NjFlNzJlZjliZjFmMzRlZjQ0M2ZlNjQyNjM3ZDhjMzk4NDZjMWEy"
-  );
-  console.log(clientSecret);
-  res.status(200).json({
-    clientSecret,
-  });
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
+  const { clientId, redirectUri, authApi, encryptedClientSecret } = apiConfig;
+  const clientSecret = decryptToken(encryptedClientSecret);
 
-  return;
   // Construct URL parameters for OAuth2
   const params = new URLSearchParams();
   params.append("client_id", clientId);
   params.append("redirect_uri", redirectUri);
   params.append("client_secret", clientSecret);
-  params.append("code", req.code);
+  params.append("code", req.body.code);
   params.append("grant_type", "authorization_code");
 
   // Request access token
-  let result = await axios
+  let accessToken = await axios
     .post(authApi, params, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
@@ -51,13 +53,15 @@ export default async function handler(req, res: NextApiResponse) {
       };
     });
 
-  if ("error" in result) {
+  if ("error" in accessToken) {
     res.status(403).json({
-      ...result,
+      ...accessToken,
     });
-  } else {
-    res.status(200).json({
-      ...result,
-    });
+    return;
   }
+
+  await storeOdAuthTokens(accessToken);
+  res.status(200).json({
+    ok: "ok",
+  });
 }

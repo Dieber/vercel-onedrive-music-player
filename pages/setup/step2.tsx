@@ -11,7 +11,7 @@ import Link from "next/link";
 import StepLayout from "../../components/pages/StepLayout";
 import { generateAuthorisationUrl } from "../../utils/oauth";
 import { useState } from "react";
-import { fetcher } from "../../libs/fetcher";
+import { fetcher, post } from "../../libs/fetcher";
 // import Navbar from '../../components/Navbar'
 // import Footer from '../../components/Footer'
 // import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
@@ -54,13 +54,18 @@ export default function Step2() {
                   return;
                 }
 
-                fetcher("/api/getTokenByOAuthCode", {
-                  oAuthCode,
-                });
-                // router.push("/setup/step3");
+                post(`/api/storeTokenByOauth`, {
+                  code: oAuthCode,
+                })
+                  .then((e) => {
+                    console.log(e);
+                  })
+                  .catch((e) => {
+                    console.log("catch", e);
+                  });
               }}
             >
-              Get Token!
+              Store OAuth!
             </button>
           </div>
         </div>

@@ -2,52 +2,35 @@ import { apiConfig } from "../../config";
 import forge from "node-forge";
 // import
 
-const clientSecret = "Aob_2-q12my-8_HmP8OA04r8.A1h4978Q~";
+const clientSecret = "26y7Q~Xxo1qQVnSW9KstkHIAfQrRtMKZMP1la";
 
-const encryptClientSecret64 =
-  "OGFjMTViY2U5ZWU3MjkwZWUxZGQ0MWFkMjNlYmM0ZDY3MDQ0ODg3ZDlmZWU2YjU2NGQ3YjkyODk0NjFlNzJlZjliZjFmMzRlZjQ0M2ZlNjQyNjM3ZDhjMzk4NDZjMWEy";
-
-const keyBase64 = "cF64rsBcceW+bXAFkhDYLg==";
+const key = forge.pkcs5.pbkdf2("onedrive", "vercel-salt", 8, 16);
+var iv = "13df13df13df13df";
 
 export function decryptToken(encryptClientSecret64: string) {
-  const key = forge.util.decode64(keyBase64);
-  const iv = forge.random.getBytesSync(16);
+  const data = forge.util.hexToBytes(encryptClientSecret64);
 
-  // decrypt some bytes using CBC mode
-  // (other modes include: CFB, OFB, CTR, and GCM)
+  console.log("key", key);
+
   var decipher = forge.cipher.createDecipher("AES-CBC", key);
-
   decipher.start({ iv: iv });
-  // encryptClientSecret64
-  //encryptClientSecret64
-
-  const encryptClientSecret = forge.util.decode64(encryptClientSecret64);
-  console.log(encryptClientSecret);
-  decipher.update(forge.util.createBuffer(encryptClientSecret));
-
-  var result = decipher.finish(); // check 'result' for true/false
+  decipher.update(forge.util.createBuffer(data));
+  decipher.finish();
   // outputs decrypted hex
-  let str = decipher.output.toString();
-  return str;
+  const bytes = decipher.output.toString();
+  // console.log(Buffer.from(bytes, "hex").toString());
+  return bytes;
+  // return forge.util.decodeUtf8(bytes);
 }
 
 export function encryptToken(token: string) {
-  const key = forge.util.decode64(keyBase64);
-  const iv = forge.random.getBytesSync(16);
-
   var cipher = forge.cipher.createCipher("AES-CBC", key);
   cipher.start({ iv: iv });
   cipher.update(forge.util.createBuffer(token));
   cipher.finish();
   var encrypted = cipher.output;
-  //   // outputs encrypted hex
-  //   console.log(encrypted.toString());
 
-  //   var encrypted = cipher.output;
-  // // outputs encrypted hex
-  // console.log(encrypted.toHex());
-
-  return forge.util.encode64(encrypted.toHex());
+  return encrypted.toHex();
 }
 
 export function generateAuthorisationUrl() {
