@@ -7,9 +7,9 @@ import { decryptToken, encryptToken } from "../../utils/oauth";
 import Redis from "ioredis";
 import { storeOdAuthTokens } from "../../utils/oauth/storeTokenToRedis";
 
-const kv = new Redis(process.env.REDIS_URL);
+// const kv = new Redis(process.env.REDIS_URL);
 
-// // function isString(test: any): test is string{
+// function isString(test: any): test is string{
 // function isError (result: any): result is Error {
 //   return "error" in result
 // }

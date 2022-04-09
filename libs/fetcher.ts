@@ -7,7 +7,9 @@
 import axios from "axios";
 
 const get = axios.get;
-const fetcher = get;
+const fetcher = (...args: Parameters<typeof axios.get>) => {
+  return get(...args).then((res) => res.data);
+};
 const post = axios.post;
 
 export { get, fetcher, post };

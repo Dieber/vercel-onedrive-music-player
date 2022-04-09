@@ -1,16 +1,11 @@
-import { apiConfig } from "../../config";
+import { apiConfig } from "../config";
 import forge from "node-forge";
-// import
-
-const clientSecret = "26y7Q~Xxo1qQVnSW9KstkHIAfQrRtMKZMP1la";
 
 const key = forge.pkcs5.pbkdf2("onedrive", "vercel-salt", 8, 16);
 var iv = "13df13df13df13df";
 
 export function decryptToken(encryptClientSecret64: string) {
   const data = forge.util.hexToBytes(encryptClientSecret64);
-
-  console.log("key", key);
 
   var decipher = forge.cipher.createDecipher("AES-CBC", key);
   decipher.start({ iv: iv });

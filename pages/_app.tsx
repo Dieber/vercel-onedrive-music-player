@@ -7,6 +7,8 @@ function MyApp({ Component, pageProps }) {
     <SWRConfig
       value={{
         fetcher,
+        revalidateOnFocus: false,
+        shouldRetryOnError: false,
       }}
     >
       <Component {...pageProps} />

@@ -1,21 +1,103 @@
 import Head from "next/head";
 import Image from "next/image";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+import useSWR from "swr";
+import { post } from "../libs/fetcher";
 import styles from "../styles/Home.module.css";
+import { Howl, Howler } from "howler";
+import {
+  map,
+  T,
+  F,
+  prop,
+  o,
+  ifElse,
+  over,
+  lensProp,
+  set,
+  find,
+  propEq,
+} from "ramda";
+
+type PlayList = Array<{
+  howl: Howl;
+  isPlaying: boolean;
+  id: string;
+  name: string;
+  src: string;
+}>;
+
+let eq = (a) => (b) => {
+  return a === b;
+};
+
+let mapList = (item) =>
+  map((it) => {
+    return over(lensProp("isPlaying"), it === item ? T : F, it);
+  });
+
+// const incCount = R.ifElse(
+//   R.has('count'),
+//   R.over(R.lensProp('count'), R.inc),
+//   R.assoc('count', 1)
+// );
+// incCount({ count: 1 }); //=> { count: 2 }
+// incCount({});           //=> { count: 1 }
+
+// const incCount = R.ifElse(
+//   R.has('count'),
+//   R.over(R.lensProp('count'), R.inc),
+//   R.assoc('count', 1)
+// );
 
 export default function Home() {
-  let audioDom = useRef<HTMLAudioElement>(null)!;
+  // let audioDom = useRef<HTMLAudioElement>(null)!;
 
-  // useEffect(() => {
-  //   var xhr = new XMLHttpRequest();
-  //   xhr.open("GET", audioDom.current.src);
-  //   xhr.responseType = "blob";
-  //   xhr.onload = (e) => {
-  //     console.log(xhr.response);
-  //   };
+  const { data: filesList } = useSWR("/api/getFiles");
+  const [musicList, setMusicList] = useState<PlayList>([]);
 
-  //   xhr.send();
-  // }, [audioDom]);
+  const playingItem = find(propEq("isPlaying", true))(musicList); //=> {a: 2}
+
+  const clickItemHandler = (item) => {
+    setMusicList(mapList(item));
+  };
+
+  useEffect(() => {
+    if (!filesList) {
+      return;
+    }
+    setMusicList(
+      filesList.files.map((item) => ({
+        howl: new Howl({
+          src: [item["@microsoft.graph.downloadUrl"]],
+          html5: true,
+        }),
+        isPlaying: false,
+        id: item.id,
+        name: item.name,
+        src: item["@microsoft.graph.downloadUrl"],
+      }))
+    );
+  }, [filesList]);
+
+  useEffect(() => {
+    if (!playingItem) {
+      return;
+    }
+
+    playingItem.howl.play();
+
+    return () => {
+      playingItem.howl.stop();
+      // musicList.forEach((item) => {
+      //   item.howl.stop();
+      // });
+    };
+
+    // musicList.forEach((item) => {
+    //   item.isPlaying ? item.howl.play() : item.howl.stop();
+    // });
+  }, [playingItem]);
 
   return (
     <div className={styles.container}>
@@ -26,12 +108,22 @@ export default function Home() {
       </Head>
 
       <main className={styles.main}>
-        <audio
-          ref={audioDom}
-          preload="auto"
-          controls
-          src="https://public.bn.files.1drv.com/y4mk35vJY8CQrtoqFsB32B9fANmOjdofhz5J-VsvlzdlHMTWiaWX6ojNTQ21-6Vgc3MF8D70O0kXxpEYri74xM_ZjcsuK8JanYYkFYnkkE38f3YWqRAZFtLm5X6qasd5_6yJ4Rd5eIwo5ON1gc8R7kwnUV4eDP5RcYEDrfW2QEZ0UcJ80jCKQ6OvZEuSj1It07uHsmqdVmk_yWGzyuFq4pLCTHQxf79oWhuTThHN0e-TFY"
-        ></audio>
+        {musicList.length !== 0 &&
+          musicList.map((item) => {
+            return (
+              <div key={item.id}>
+                <div
+                  className="cursor-pointer"
+                  onClick={(e) => {
+                    clickItemHandler(item);
+                    // item.howl.play();
+                  }}
+                >
+                  {item.name}
+                </div>
+              </div>
+            );
+          })}
       </main>
 
       <footer className={styles.footer}>

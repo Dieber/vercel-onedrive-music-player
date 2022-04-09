@@ -54,7 +54,7 @@ export default function Step2() {
                   return;
                 }
 
-                post(`/api/storeTokenByOauth`, {
+                post(`/api/storeTokenByOAuth`, {
                   code: oAuthCode,
                 })
                   .then((e) => {

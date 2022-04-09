@@ -21,7 +21,7 @@ const apiConfig = {
 };
 
 const siteConfig = {
-  shit: 1,
+  baseDirectory: "/VercelMusic",
 };
 
 module.exports = { apiConfig, siteConfig };
