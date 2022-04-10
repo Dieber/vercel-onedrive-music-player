@@ -1,6 +1,7 @@
 lockfileVersion: 5.3
 
 specifiers:
+  '@fortawesome/fontawesome-svg-core': ^6.1.1
   '@types/howler': ^2.2.7
   '@types/node': ^17.0.23
   '@types/node-forge': ^1.0.1
@@ -23,6 +24,7 @@ specifiers:
   typescript: ^4.6.3
 
 dependencies:
+  '@fortawesome/fontawesome-svg-core': registry.npmmirror.com/@fortawesome/fontawesome-svg-core/6.1.1
   axios: registry.npmmirror.com/axios/0.26.1
   howler: registry.npmmirror.com/howler/2.2.3
   ioredis: 5.0.3
@@ -211,6 +213,24 @@ packages:
     transitivePeerDependencies:
       - supports-color
     dev: true
+
+  registry.npmmirror.com/@fortawesome/fontawesome-common-types/6.1.1:
+    resolution: {integrity: sha512-wVn5WJPirFTnzN6tR95abCx+ocH+3IFLXAgyavnf9hUmN0CfWoDjPT/BAWsUVwSlYYVBeCLJxaqi7ZGe4uSjBA==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-6.1.1.tgz}
+    name: '@fortawesome/fontawesome-common-types'
+    version: 6.1.1
+    engines: {node: '>=6'}
+    requiresBuild: true
+    dev: false
+
+  registry.npmmirror.com/@fortawesome/fontawesome-svg-core/6.1.1:
+    resolution: {integrity: sha512-NCg0w2YIp81f4V6cMGD9iomfsIj7GWrqmsa0ZsPh59G7PKiGN1KymZNxmF00ssuAlo/VZmpK6xazsGOwzKYUMg==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@fortawesome/fontawesome-svg-core/-/fontawesome-svg-core-6.1.1.tgz}
+    name: '@fortawesome/fontawesome-svg-core'
+    version: 6.1.1
+    engines: {node: '>=6'}
+    requiresBuild: true
+    dependencies:
+      '@fortawesome/fontawesome-common-types': registry.npmmirror.com/@fortawesome/fontawesome-common-types/6.1.1
+    dev: false
 
   registry.npmmirror.com/@humanwhocodes/config-array/0.9.5:
     resolution: {integrity: sha512-ObyMyWxZiCu/yTisA7uzx81s40xR2fD5Cg/2Kq7G02ajkNubJf6BopgDTmDyc3U7sXpNKM8cYOw7s7Tyr+DnCw==, registry: https://registry.npm.taobao.org/, tarball: https://registry.npmmirror.com/@humanwhocodes/config-array/-/config-array-0.9.5.tgz}
