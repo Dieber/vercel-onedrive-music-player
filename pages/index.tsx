@@ -44,7 +44,7 @@ export default function Home() {
       filesList.files.map((item) => ({
         howl: new Howl({
           src: [item["@microsoft.graph.downloadUrl"]],
-          html5: true,
+          html5: false,
         }),
         isPlaying: false,
         id: item.id,
