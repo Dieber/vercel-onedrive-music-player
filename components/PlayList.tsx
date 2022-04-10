@@ -20,7 +20,7 @@ interface Props {
 
 const PlayList: React.FC<Props> = ({ playListData, onClickItem }) => {
   return (
-    <div>
+    <div className="">
       {playListData.length !== 0 &&
         playListData.map((item) => {
           return (
