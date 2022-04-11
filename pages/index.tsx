@@ -2,7 +2,7 @@ import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import useSWR from "swr";
-import { post } from "../libs/fetcher";
+import { get, post } from "../libs/fetcher";
 import styles from "../styles/Home.module.css";
 import { Howl, Howler } from "howler";
 // import mp3 from "../demo/shit.mp3";
@@ -23,6 +23,17 @@ import {
 import Player from "../components/Player";
 import PlayList, { PlayListData } from "../components/PlayList";
 
+function blobToArrayBuffer(blob) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.addEventListener("loadend", (e) => {
+      resolve(reader.result);
+    });
+    reader.addEventListener("error", reject);
+    reader.readAsArrayBuffer(blob);
+  });
+}
+
 let mapList = (item) =>
   map((it) => {
     return over(lensProp("isPlaying"), it === item ? T : F, it);
@@ -30,7 +41,7 @@ let mapList = (item) =>
 
 export default function Home() {
   const { data: filesList } = useSWR("/api/getFiles");
-  const [playList, setplayList] = useState<PlayListData>([]);
+  const [playList, setPlayList] = useState<PlayListData>([]);
   const [showPlayList, setShowPlayList] = useState(false);
 
   const playingItem = find(propEq("isPlaying", true), playList);
@@ -39,36 +50,21 @@ export default function Home() {
   console.log(isPlaying);
 
   const clickItemHandler = (item) => {
-    setplayList(mapList(item));
+    // if (item === )
+    setPlayList(mapList(item));
   };
-
-  // useEffect(() => {
-  //   let shit = new Howl({
-  //     src: ["/assets/shit.mp3"],
-  //     onload: (...args) => {
-  //       console.log("1111111", ...args);
-  //     },
-  //   });
-  //   shit.play();
-  // }, []);
 
   useEffect(() => {
     if (!filesList) {
       return;
     }
-    setplayList(
-      filesList.files.map((item) => ({
-        howl: new Howl({
-          src: [item["@microsoft.graph.downloadUrl"]],
-          // html5: true,
-          onload: (...args) => {
-            console.log(...args);
-          },
-        }),
 
+    setPlayList(
+      filesList.files.map((item) => ({
         isPlaying: false,
         id: item.id,
         name: item.name,
+        src: item["@microsoft.graph.downloadUrl"],
       }))
     );
   }, [filesList]);
@@ -77,9 +73,27 @@ export default function Home() {
     if (!playingItem) {
       return;
     }
-    playingItem.howl.play();
+
+    let howl;
+
+    get(playingItem.src, {
+      responseType: "arraybuffer",
+      onDownloadProgress: (progressEvent) => {
+        console.log(progressEvent);
+      },
+    }).then((res: any) => {
+      const blob = new Blob([res.data], { type: "audio/mpeg" });
+      const audioUrl = URL.createObjectURL(blob);
+      howl = new Howl({
+        src: [audioUrl],
+        format: ["mp3"],
+        onload: (...args) => {},
+      });
+      howl?.play();
+    });
+
     return () => {
-      playingItem.howl.stop();
+      howl?.stop();
     };
   }, [playingItem]);
 
@@ -98,6 +112,7 @@ export default function Home() {
           totalTime={0}
           musicTitle={""}
           onPause={() => {}}
+          onPlay={() => {}}
         ></Player>
         <PlayList
           playListData={playList}
