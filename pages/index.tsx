@@ -5,6 +5,7 @@ import useSWR from "swr";
 import { post } from "../libs/fetcher";
 import styles from "../styles/Home.module.css";
 import { Howl, Howler } from "howler";
+// import mp3 from "../demo/shit.mp3";
 import {
   map,
   T,
@@ -17,6 +18,7 @@ import {
   set,
   find,
   propEq,
+  isNil,
 } from "ramda";
 import Player from "../components/Player";
 import PlayList, { PlayListData } from "../components/PlayList";
@@ -29,12 +31,26 @@ let mapList = (item) =>
 export default function Home() {
   const { data: filesList } = useSWR("/api/getFiles");
   const [playList, setplayList] = useState<PlayListData>([]);
+  const [showPlayList, setShowPlayList] = useState(false);
 
   const playingItem = find(propEq("isPlaying", true), playList);
+  const isPlaying = !isNil(playingItem);
+
+  console.log(isPlaying);
 
   const clickItemHandler = (item) => {
     setplayList(mapList(item));
   };
+
+  // useEffect(() => {
+  //   let shit = new Howl({
+  //     src: ["/assets/shit.mp3"],
+  //     onload: (...args) => {
+  //       console.log("1111111", ...args);
+  //     },
+  //   });
+  //   shit.play();
+  // }, []);
 
   useEffect(() => {
     if (!filesList) {
@@ -44,8 +60,12 @@ export default function Home() {
       filesList.files.map((item) => ({
         howl: new Howl({
           src: [item["@microsoft.graph.downloadUrl"]],
-          html5: false,
+          // html5: true,
+          onload: (...args) => {
+            console.log(...args);
+          },
         }),
+
         isPlaying: false,
         id: item.id,
         name: item.name,
@@ -57,7 +77,6 @@ export default function Home() {
     if (!playingItem) {
       return;
     }
-
     playingItem.howl.play();
     return () => {
       playingItem.howl.stop();
@@ -73,7 +92,13 @@ export default function Home() {
       </Head>
 
       <main className="w-full h-full">
-        <Player currentTime={0} totalTime={0} musicTitle={""}></Player>
+        <Player
+          isPlaying={isPlaying}
+          currentTime={0}
+          totalTime={0}
+          musicTitle={""}
+          onPause={() => {}}
+        ></Player>
         <PlayList
           playListData={playList}
           onClickItem={clickItemHandler}
