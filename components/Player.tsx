@@ -20,7 +20,6 @@ const Player: React.FC<Props> = ({
 }) => {
   let [currentTime, setCurrentTime] = useState<number | null>(null);
   let [totalTime, setTotalTime] = useState<number | null>(0);
-
   let [isPlaying, setIsPlaying] = useState(false);
 
   // console.log(audio?.duration(), "xxxx");
