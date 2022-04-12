@@ -1,41 +1,29 @@
 import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
-import useSWR from "swr";
+import useSWR, { mutate } from "swr";
 import { get, post } from "../libs/fetcher";
 import styles from "../styles/Home.module.css";
 import { Howl, Howler } from "howler";
 // import mp3 from "../demo/shit.mp3";
-import {
-  map,
-  T,
-  F,
-  prop,
-  o,
-  ifElse,
-  over,
-  lensProp,
-  set,
-  find,
-  propEq,
-  isNil,
-} from "ramda";
+import { map, T, F, over, lensProp, find, propEq, isNil } from "ramda";
+
 import Player from "../components/Player";
-import PlayList, { PlayListData } from "../components/PlayList";
+import PlayList, { PlayListData, PlaylistItem } from "../components/PlayList";
 
-function blobToArrayBuffer(blob) {
-  return new Promise((resolve, reject) => {
-    const reader = new FileReader();
-    reader.addEventListener("loadend", (e) => {
-      resolve(reader.result);
-    });
-    reader.addEventListener("error", reject);
-    reader.readAsArrayBuffer(blob);
-  });
-}
+// function blobToArrayBuffer(blob) {
+//   return new Promise((resolve, reject) => {
+//     const reader = new FileReader();
+//     reader.addEventListener("loadend", (e) => {
+//       resolve(reader.result);
+//     });
+//     reader.addEventListener("error", reject);
+//     reader.readAsArrayBuffer(blob);
+//   });
+// }
 
-let mapList = (item) =>
-  map((it) => {
+let mapList = (item: PlaylistItem) =>
+  map((it: PlaylistItem) => {
     return over(lensProp("isPlaying"), it === item ? T : F, it);
   });
 
@@ -43,24 +31,25 @@ export default function Home() {
   const { data: filesList } = useSWR("/api/getFiles");
   const [playList, setPlayList] = useState<PlayListData>([]);
   const [showPlayList, setShowPlayList] = useState(false);
+  const [liveHowl, setLiveHowl] = useState<Howl>();
+
+  const [liveAudioUrl, setLiveAudioUrl] = useState<string>();
 
   const playingItem = find(propEq("isPlaying", true), playList);
-  const isPlaying = !isNil(playingItem);
 
-  console.log(isPlaying);
-
-  const clickItemHandler = (item) => {
-    // if (item === )
+  // change playingItem
+  const clickItemHandler = (item: PlaylistItem) => {
     setPlayList(mapList(item));
   };
 
+  // change PlayList when filesList changed
   useEffect(() => {
     if (!filesList) {
       return;
     }
 
     setPlayList(
-      filesList.files.map((item) => ({
+      filesList.files.map((item: any) => ({
         isPlaying: false,
         id: item.id,
         name: item.name,
@@ -69,33 +58,38 @@ export default function Home() {
     );
   }, [filesList]);
 
+  // download and play when playing item changed
   useEffect(() => {
     if (!playingItem) {
       return;
     }
 
-    let howl;
+    let audio: Howl;
+    let isCanceled = false;
 
     get(playingItem.src, {
       responseType: "arraybuffer",
       onDownloadProgress: (progressEvent) => {
-        console.log(progressEvent);
+        if (isCanceled) {
+          return;
+        }
       },
     }).then((res: any) => {
+      if (isCanceled) {
+        return;
+      }
+
       const blob = new Blob([res.data], { type: "audio/mpeg" });
       const audioUrl = URL.createObjectURL(blob);
-      howl = new Howl({
-        src: [audioUrl],
-        format: ["mp3"],
-        onload: (...args) => {},
-      });
-      howl?.play();
+      setLiveAudioUrl(audioUrl);
     });
 
     return () => {
-      howl?.stop();
+      isCanceled = true;
     };
   }, [playingItem]);
+
+  console.log(liveHowl);
 
   return (
     <>
@@ -105,11 +99,9 @@ export default function Home() {
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="w-full h-full">
+      <main className="w-full h-full ">
         <Player
-          isPlaying={isPlaying}
-          currentTime={0}
-          totalTime={0}
+          audioUrl={liveAudioUrl}
           musicTitle={""}
           onPause={() => {}}
           onPlay={() => {}}

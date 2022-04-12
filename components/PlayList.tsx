@@ -3,8 +3,8 @@
 import { Howl } from "howler";
 import Icon from "./Icon";
 
-type PlaylistItem = {
-  howl: Howl;
+export type PlaylistItem = {
+  src: string;
   isPlaying: boolean;
   id: string;
   name: string;
@@ -20,11 +20,14 @@ interface Props {
 
 const PlayList: React.FC<Props> = ({ playListData, onClickItem }) => {
   return (
-    <div className="absolute top-0">
+    <div className=" px-8 absolute top-0 w-[600px] right-0 bg-white h-full rounded-l-xl overflow-hdden shadow-md overflow-y-scroll">
       {playListData.length !== 0 &&
         playListData.map((item) => {
           return (
-            <div key={item.id}>
+            <div
+              className="h-20 flex items-center border-b-2 text-lg"
+              key={item.id}
+            >
               <div
                 className="cursor-pointer"
                 onClick={(e) => {

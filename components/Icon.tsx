@@ -1,15 +1,18 @@
-interface Props {
+import { HTMLAttributes } from "react";
+
+interface Props extends HTMLAttributes<SVGSVGElement> {
   name: string;
   className?: string;
 }
 
-const Icon: React.FC<Props> = (props) => {
+const Icon: React.FC<Props> = ({ className, name, ...props }) => {
   return (
     <svg
-      className={`icon cursor-pointer ${props.className}`}
+      {...props}
+      className={`icon cursor-pointer ${className}`}
       aria-hidden="true"
     >
-      <use xlinkHref={`#omp-${props.name}`}></use>
+      <use xlinkHref={`#omp-${name}`}></use>
     </svg>
   );
 };

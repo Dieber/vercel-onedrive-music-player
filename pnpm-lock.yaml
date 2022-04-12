@@ -12,6 +12,7 @@ specifiers:
   eslint-config-next: 12.1.0
   file-loader: ^6.2.0
   howler: ^2.2.3
+  idb: ^7.0.1
   ioredis: ^5.0.3
   next: 12.1.0
   next-i18next: ^11.0.0
@@ -28,6 +29,7 @@ dependencies:
   '@fortawesome/fontawesome-svg-core': registry.npmmirror.com/@fortawesome/fontawesome-svg-core/6.1.1
   axios: registry.npmmirror.com/axios/0.26.1
   howler: registry.npmmirror.com/howler/2.2.3
+  idb: 7.0.1
   ioredis: 5.0.3
   next: registry.npmmirror.com/next/12.1.0_react-dom@17.0.2+react@17.0.2
   next-i18next: registry.npmmirror.com/next-i18next/11.0.0_caa633a00319350dbda42996613fe26c
@@ -232,6 +234,10 @@ packages:
     requiresBuild: true
     dev: true
     optional: true
+
+  /idb/7.0.1:
+    resolution: {integrity: sha512-UUxlE7vGWK5RfB/fDwEGgRf84DY/ieqNha6msMV99UsEMQhJ1RwbCd8AYBj3QMgnE3VZnfQvm4oKVCJTYlqIgg==}
+    dev: false
 
   /ioredis/5.0.3:
     resolution: {integrity: sha512-hKxywVypoGGUJDyfnMufO0VNkuIaQufo2/PJ5SOYBKWgf4+gCnZEPaBPle615k08euY9/B9DKytVtwZROF7HaA==}
