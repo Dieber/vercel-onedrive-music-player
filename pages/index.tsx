@@ -8,8 +8,9 @@ import { Howl, Howler } from "howler";
 // import mp3 from "../demo/shit.mp3";
 import { map, T, F, over, lensProp, find, propEq, isNil } from "ramda";
 
-import Player from "../components/Player";
+import ControlPanel from "../components/ControlPanel";
 import PlayList, { PlayListData, PlaylistItem } from "../components/PlayList";
+import useMusicStore from "../store";
 
 // function blobToArrayBuffer(blob) {
 //   return new Promise((resolve, reject) => {
@@ -29,18 +30,19 @@ let mapList = (item: PlaylistItem) =>
 
 export default function Home() {
   const { data: filesList } = useSWR("/api/getFiles");
-  const [playList, setPlayList] = useState<PlayListData>([]);
+  const { playList } = useMusicStore();
+  const setPlayList = useMusicStore((s) => s.setPlayList);
   const [showPlayList, setShowPlayList] = useState(false);
   const [liveHowl, setLiveHowl] = useState<Howl>();
 
   const [liveAudioUrl, setLiveAudioUrl] = useState<string>();
 
-  const playingItem = find(propEq("isPlaying", true), playList);
+  // const playingItem = find(propEq("isPlaying", true), playList);
 
   // change playingItem
-  const clickItemHandler = (item: PlaylistItem) => {
-    setPlayList(mapList(item));
-  };
+  // const clickItemHandler = (item: PlaylistItem) => {
+  //   setPlayList(mapList(item));
+  // };
 
   // change PlayList when filesList changed
   useEffect(() => {
@@ -50,7 +52,6 @@ export default function Home() {
 
     setPlayList(
       filesList.files.map((item: any) => ({
-        isPlaying: false,
         id: item.id,
         name: item.name,
         src: item["@microsoft.graph.downloadUrl"],
@@ -59,37 +60,35 @@ export default function Home() {
   }, [filesList]);
 
   // download and play when playing item changed
-  useEffect(() => {
-    if (!playingItem) {
-      return;
-    }
+  // useEffect(() => {
+  //   if (!playingItem) {
+  //     return;
+  //   }
 
-    let audio: Howl;
-    let isCanceled = false;
+  //   // let audio: Howl;
+  //   // let isCanceled = false;
 
-    get(playingItem.src, {
-      responseType: "arraybuffer",
-      onDownloadProgress: (progressEvent) => {
-        if (isCanceled) {
-          return;
-        }
-      },
-    }).then((res: any) => {
-      if (isCanceled) {
-        return;
-      }
+  //   // get(playingItem.src, {
+  //   //   responseType: "arraybuffer",
+  //   //   onDownloadProgress: (progressEvent) => {
+  //   //     if (isCanceled) {
+  //   //       return;
+  //   //     }
+  //   //   },
+  //   // }).then((res: any) => {
+  //   //   if (isCanceled) {
+  //   //     return;
+  //   //   }
 
-      const blob = new Blob([res.data], { type: "audio/mpeg" });
-      const audioUrl = URL.createObjectURL(blob);
-      setLiveAudioUrl(audioUrl);
-    });
+  //   //   const blob = new Blob([res.data], { type: "audio/mpeg" });
+  //   //   const audioUrl = URL.createObjectURL(blob);
+  //   //   setLiveAudioUrl(audioUrl);
+  //   // });
 
-    return () => {
-      isCanceled = true;
-    };
-  }, [playingItem]);
-
-  console.log(liveHowl);
+  //   return () => {
+  //     isCanceled = true;
+  //   };
+  // }, [playingItem]);
 
   return (
     <>
@@ -100,16 +99,18 @@ export default function Home() {
       </Head>
 
       <main className="w-full h-full ">
-        <Player
+        <ControlPanel
           audioUrl={liveAudioUrl}
           musicTitle={""}
           onPause={() => {}}
           onPlay={() => {}}
-        ></Player>
-        <PlayList
-          playListData={playList}
-          onClickItem={clickItemHandler}
-        ></PlayList>
+        ></ControlPanel>
+        {playList && (
+          <PlayList
+            playListData={playList}
+            // onClickItem={clickItemHandler}
+          ></PlayList>
+        )}
       </main>
     </>
   );

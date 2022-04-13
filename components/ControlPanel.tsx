@@ -1,7 +1,9 @@
 // import
 
 import { Howl } from "howler";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { get } from "../libs/fetcher";
+import useMusicStore from "../store";
 import Icon from "./Icon";
 
 interface Props {
@@ -12,48 +14,49 @@ interface Props {
   onPlay: () => void;
 }
 
-const Player: React.FC<Props> = ({
+const ControlPanel: React.FC<Props> = ({
   audioUrl,
   // currentTime,
   // totalTime,
   musicTitle,
 }) => {
+  let { playerState, livingAudioUrl } = useMusicStore();
   let [currentTime, setCurrentTime] = useState<number | null>(null);
   let [totalTime, setTotalTime] = useState<number | null>(0);
-  let [isPlaying, setIsPlaying] = useState(false);
+
+  let audio = useRef<Howl | null>(null);
+
+  useEffect(() => {
+    if (!livingAudioUrl) {
+      return;
+    }
+    let howl = new Howl({
+      src: [livingAudioUrl],
+      format: ["mp3"],
+    });
+
+    howl.on("end", function () {
+      // next()
+    });
+
+    audio.current = howl;
+    return () => {
+      audio.current!.stop();
+    };
+  }, []);
 
   // console.log(audio?.duration(), "xxxx");
 
   useEffect(() => {
-    if (!audioUrl) {
-      setCurrentTime(null);
-      setTotalTime(null);
+    if (playerState === "stop") {
       return;
+    } else if (playerState === "play") {
+      audio.current!.play();
+    } else if (playerState === "pause") {
+      audio.current?.pause();
+    } else {
     }
-
-    let audio = new Howl({
-      src: [audioUrl],
-      format: ["mp3"],
-    });
-
-    audio.on("load", () => {
-      setTotalTime(audio.duration());
-    });
-
-    const raf = () => {
-      setCurrentTime(audio.seek());
-      requestAnimationFrame(raf);
-    };
-
-    let id = requestAnimationFrame(raf);
-
-    return () => {
-      cancelAnimationFrame(id);
-      audio.off("load");
-    };
-  }, [audioUrl, isPlaying]);
-
-  useEffect(() => {}, [isPlaying]);
+  }, [playerState]);
 
   // useEffect(() => {
 
@@ -70,20 +73,10 @@ const Player: React.FC<Props> = ({
       <div className="control-bar flex absolute left-0 right-0 bottom-16 w-1/2 my-0 mx-auto justify-between text-cyan-50 text-5xl">
         <Icon name="audio-high"></Icon>
         <Icon name="previous"></Icon>
-        {isPlaying ? (
-          <Icon
-            name="pause"
-            onClick={() => {
-              audio && setIsPlaying(false);
-            }}
-          ></Icon>
+        {playerState === "play" ? (
+          <Icon name="pause" onClick={() => {}}></Icon>
         ) : (
-          <Icon
-            name="play"
-            onClick={() => {
-              audio && setIsPlaying(true);
-            }}
-          ></Icon>
+          <Icon name="play" onClick={() => {}}></Icon>
         )}
         <Icon name="next"></Icon>
         <Icon name="list"></Icon>
@@ -92,4 +85,4 @@ const Player: React.FC<Props> = ({
   );
 };
 
-export default Player;
+export default ControlPanel;
