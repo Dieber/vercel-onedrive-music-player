@@ -35,17 +35,17 @@ const useMusicStore = create<MusicStore>((set, getter) => ({
 
   load: async (itemId: any) => {
     let playList = getter().playList;
-    let playingItem =
+    let willPlayItem =
       playList?.find((item) => {
         return item.id === itemId;
       }) ?? null;
-    if (!playingItem) {
+    if (!willPlayItem) {
       return;
     }
     set({
       playerState: "load",
     });
-    let blob = await get(playingItem.src, {
+    let blob = await get(willPlayItem.src, {
       responseType: "arraybuffer",
       onDownloadProgress: (progressEvent) => {},
     }).then((res: any) => {
@@ -58,12 +58,17 @@ const useMusicStore = create<MusicStore>((set, getter) => ({
     });
   },
 
+  next: () => {
+    // liveItemId
+    // let playingItem =
+    //   playList?.find((item) => {
+    //     return item.id === liveItemId;
+    //   }) ?? null;
+  },
+
   loadThenPlay: async (itemId) => {
     await getter().load(itemId);
     getter().play();
-    // itemId = 'shit'
-    // set({bears: 0})
-    // set(i)
   },
   pause: () => {
     set({

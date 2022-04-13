@@ -20,7 +20,7 @@ const ControlPanel: React.FC<Props> = ({
   // totalTime,
   musicTitle,
 }) => {
-  let { playerState, livingAudioUrl } = useMusicStore();
+  let { playerState, livingAudioUrl, pause } = useMusicStore();
   let [currentTime, setCurrentTime] = useState<number | null>(null);
   let [totalTime, setTotalTime] = useState<number | null>(0);
 
@@ -36,14 +36,15 @@ const ControlPanel: React.FC<Props> = ({
     });
 
     howl.on("end", function () {
-      // next()
+      pause();
     });
 
     audio.current = howl;
     return () => {
       audio.current!.stop();
+      howl.off("end");
     };
-  }, []);
+  }, [livingAudioUrl]);
 
   // console.log(audio?.duration(), "xxxx");
 
