@@ -1,4 +1,4 @@
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 import { getAccessToken } from "../../utils/oauth";
 import { posix as pathPosix } from "path";
 import { apiConfig, siteConfig } from "../../config";
@@ -27,7 +27,10 @@ export function encodePath(path: string): string {
   return `:${encodeURIComponent(encodedPath)}`;
 }
 
-export default async function handler(req, res: NextApiResponse) {
+export default async function handler(
+  req: NextApiRequest,
+  res: NextApiResponse
+) {
   const { path = "/", raw = false, next = "" } = req.query;
 
   if (path === "[...path]") {

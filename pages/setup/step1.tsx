@@ -48,7 +48,8 @@ const RedisInfo = () => {
   return (
     <div className="text-left border-1 rounded-md bg-red-900/30 p-4 m-4">
       <p>
-        It Seems that you haven't specified REDIS_URL in Vercel env variable.{" "}
+        It Seems that you haven&apos;`t specified REDIS_URL in Vercel env
+        variable.{" "}
       </p>
       <p>
         You need to deploy the project again and specific REDIS_URL or integrate
@@ -95,13 +96,4 @@ export default function Step1() {
       </StepLayout>
     </AppLayout>
   );
-}
-
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      // ...(await fetcher("/api/checkIfRedisAvaliable")),
-      // ...(await serverSideTranslations(locale, ['common'])),
-    },
-  };
 }

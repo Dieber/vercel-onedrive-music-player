@@ -30,21 +30,9 @@ let mapList = (item: PlaylistItem) =>
 
 export default function Home() {
   const { data: filesList } = useSWR("/api/getFiles");
-  const { playList } = useMusicStore();
-  const setPlayList = useMusicStore((s) => s.setPlayList);
-  const [showPlayList, setShowPlayList] = useState(false);
-  const [liveHowl, setLiveHowl] = useState<Howl>();
+  const { playList, showList } = useMusicStore();
+  const { setPlayList } = useMusicStore();
 
-  const [liveAudioUrl, setLiveAudioUrl] = useState<string>();
-
-  // const playingItem = find(propEq("isPlaying", true), playList);
-
-  // change playingItem
-  // const clickItemHandler = (item: PlaylistItem) => {
-  //   setPlayList(mapList(item));
-  // };
-
-  // change PlayList when filesList changed
   useEffect(() => {
     if (!filesList) {
       return;
@@ -57,38 +45,7 @@ export default function Home() {
         src: item["@microsoft.graph.downloadUrl"],
       }))
     );
-  }, [filesList]);
-
-  // download and play when playing item changed
-  // useEffect(() => {
-  //   if (!playingItem) {
-  //     return;
-  //   }
-
-  //   // let audio: Howl;
-  //   // let isCanceled = false;
-
-  //   // get(playingItem.src, {
-  //   //   responseType: "arraybuffer",
-  //   //   onDownloadProgress: (progressEvent) => {
-  //   //     if (isCanceled) {
-  //   //       return;
-  //   //     }
-  //   //   },
-  //   // }).then((res: any) => {
-  //   //   if (isCanceled) {
-  //   //     return;
-  //   //   }
-
-  //   //   const blob = new Blob([res.data], { type: "audio/mpeg" });
-  //   //   const audioUrl = URL.createObjectURL(blob);
-  //   //   setLiveAudioUrl(audioUrl);
-  //   // });
-
-  //   return () => {
-  //     isCanceled = true;
-  //   };
-  // }, [playingItem]);
+  }, [filesList, setPlayList]);
 
   return (
     <>
@@ -100,14 +57,13 @@ export default function Home() {
 
       <main className="w-full h-full ">
         <ControlPanel
-          audioUrl={liveAudioUrl}
           musicTitle={""}
           onPause={() => {}}
           onPlay={() => {}}
         ></ControlPanel>
-        {playList && (
+        {showList && (
           <PlayList
-            playListData={playList}
+            playListData={playList ?? []}
             // onClickItem={clickItemHandler}
           ></PlayList>
         )}

@@ -12,8 +12,9 @@ type MusicStore = {
   pause: () => void;
   play: () => void;
   load: (itemId: string) => Promise<void>;
-
   playerState: "load" | "play" | "pause" | "stop";
+  showList: boolean;
+  setShowList: (show: boolean) => void;
 };
 
 const useMusicStore = create<MusicStore>((set, getter) => ({
@@ -21,6 +22,13 @@ const useMusicStore = create<MusicStore>((set, getter) => ({
   playerState: "stop",
   playList: null,
   livingAudioUrl: null,
+  showList: false,
+  setShowList: (show: boolean) => {
+    console.log("123123");
+    set({
+      showList: show,
+    });
+  },
   setPlayList: (playList: PlayListData) => {
     set({
       playList,

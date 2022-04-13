@@ -5,21 +5,26 @@ import { decryptToken, encryptToken } from "./crypto";
 
 // Persistent key-value store is provided by Redis, hosted on Upstash
 // https://vercel.com/integrations/upstash
-const kv = new Redis(process.env.REDIS_URL);
+const kv = new Redis(process.env.REDIS_URL!);
 const clientSecret = decryptToken(apiConfig.encryptedClientSecret);
 
 interface GetOAuthTokens {
-  accessToken: string;
-  refreshToken: string;
+  accessToken: string | null;
+  refreshToken: string | null;
 }
 
-interface SetOAuthTokens extends GetOAuthTokens {
+interface SetOAuthTokens {
+  accessToken: string;
+  refreshToken: string;
   expiryTime: number;
 }
 
 export async function getOdAuthTokens(): Promise<GetOAuthTokens> {
   const accessToken = await kv.get("access_token");
   const refreshToken = await kv.get("refresh_token");
+
+  // if (accessToken)
+
   return {
     accessToken: accessToken && decryptToken(accessToken),
     refreshToken: refreshToken && decryptToken(refreshToken),
@@ -49,7 +54,6 @@ export async function getAccessToken(): Promise<string> {
     return "";
   }
 
-  console.log("hisfhsdfhisfhishf");
   // Fetch new access token with in storage refresh token
   const body = new URLSearchParams();
   body.append("client_id", apiConfig.clientId);
@@ -64,8 +68,6 @@ export async function getAccessToken(): Promise<string> {
     },
   });
 
-  console.log(resp);
-
   if ("access_token" in resp.data && "refresh_token" in resp.data) {
     const { expires_in, access_token, refresh_token } = resp.data;
 
@@ -79,20 +81,4 @@ export async function getAccessToken(): Promise<string> {
   }
 
   return "";
-}
-
-// Generate the Microsoft OAuth 2.0 authorization URL, used for requesting the authorisation code
-export function generateAuthorisationUrl(): string {
-  const { clientId, redirectUri, authApi, scope } = apiConfig;
-  const authUrl = authApi.replace("/token", "/authorize");
-
-  // Construct URL parameters for OAuth2
-  const params = new URLSearchParams();
-  params.append("client_id", clientId);
-  params.append("redirect_uri", redirectUri);
-  params.append("response_type", "code");
-  params.append("scope", scope);
-  params.append("response_mode", "query");
-
-  return `${authUrl}?${params.toString()}`;
 }

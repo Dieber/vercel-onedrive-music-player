@@ -1,20 +1,11 @@
-import Head from "next/head";
-import Image from "next/image";
 import { useRouter } from "next/router";
-import { useTranslation, Trans } from "next-i18next";
-import { serverSideTranslations } from "next-i18next/serverSideTranslations";
 
-import { siteConfig, apiConfig } from "../../config/index.js";
 import AppLayout from "../../components/AppLayout";
-import Step from "../../components/Step";
-import Link from "next/link";
+
 import StepLayout from "../../components/pages/StepLayout";
-import { generateAuthorisationUrl } from "../../utils/oauth";
+import { generateAuthorisationUrl } from "../../utils/token";
 import { useState } from "react";
 import { fetcher, post } from "../../libs/fetcher";
-// import Navbar from '../../components/Navbar'
-// import Footer from '../../components/Footer'
-// import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 
 const authUrl = generateAuthorisationUrl();
 
@@ -72,12 +63,4 @@ export default function Step2() {
       </StepLayout>
     </AppLayout>
   );
-}
-
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      // ...(await serverSideTranslations(locale, ['common'])),
-    },
-  };
 }

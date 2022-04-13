@@ -2,10 +2,9 @@ import axios, { AxiosResponse } from "axios";
 import { url } from "inspector";
 import { NextApiRequest, NextApiResponse } from "next";
 import { apiConfig } from "../../config";
-import { decryptToken, encryptToken } from "../../utils/oauth";
+import { decryptToken, encryptToken } from "../../utils/crypto";
 
-import Redis from "ioredis";
-import { storeOdAuthTokens } from "../../utils/oauth/storeTokenToRedis";
+import { storeOdAuthTokens } from "../../utils/oauth";
 
 // const kv = new Redis(process.env.REDIS_URL);
 

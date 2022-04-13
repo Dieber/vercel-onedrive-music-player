@@ -9,7 +9,7 @@ import AppLayout from "../../components/AppLayout";
 import Step from "../../components/Step";
 import Link from "next/link";
 import StepLayout from "../../components/pages/StepLayout";
-import { generateAuthorisationUrl } from "../../utils/oauth";
+import { generateAuthorisationUrl } from "../../utils/token";
 import { useState } from "react";
 // import Navbar from '../../components/Navbar'
 // import Footer from '../../components/Footer'
@@ -30,12 +30,4 @@ export default function Step3() {
       <StepLayout from={2} to={3}></StepLayout>
     </AppLayout>
   );
-}
-
-export async function getServerSideProps({ locale }) {
-  return {
-    props: {
-      // ...(await serverSideTranslations(locale, ['common'])),
-    },
-  };
 }
