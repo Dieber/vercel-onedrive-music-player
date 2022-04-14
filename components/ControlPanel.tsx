@@ -5,7 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { get } from "../utils/fetcher";
 import useMusicStore from "../store";
 import Icon from "./Icon";
-import useRaf from "../hooks/useRaf";
+// import useRaf from "../hooks/useRaf";
 
 interface Props {
   audio?: Howl;
@@ -19,77 +19,64 @@ const mapIcons = {
   play: "pause",
   stop: "play",
   pause: "play",
-  load: "cloud-download",
+  loading: "cloud-download",
 };
 
 const ControlPanel: React.FC<Props> = ({ musicTitle }) => {
-  let {
-    playerState,
-    livingAudioUrl,
-    pause,
-    play,
-    setShowList,
-    clearDownloadingCount,
-    stop,
-    downloadingCount,
-  } = useMusicStore();
+  let { playerState, audio, pause, play, next, prev, setShowList } =
+    useMusicStore();
   let [currentTime, setCurrentTime] = useState<number | null>(null);
   let [totalTime, setTotalTime] = useState<number | null>(null);
 
-  let audio = useRef<Howl | null>(null);
+  // let audio = useRef<Howl | null>(null);
 
+  // when audio is loaded
   useEffect(() => {
-    if (!livingAudioUrl) {
+    if (!audio) {
       return;
     }
+    play();
 
-    let howl = new Howl({
-      src: [livingAudioUrl],
-      format: ["mp3"],
-    });
-
-    howl.on("load", function () {
-      console.log("music loaded ");
-      play();
-      setTotalTime(howl.duration());
-    });
-
-    howl.on("end", function () {
+    audio.on("end", function () {
       pause();
     });
 
-    audio.current = howl;
-
     let raf = () => {
-      setCurrentTime(howl.seek());
-      requestAnimationFrame(raf);
+      if (audio) {
+        setCurrentTime(audio.seek());
+        requestAnimationFrame(raf);
+      }
     };
+
     let id = requestAnimationFrame(raf);
 
     return () => {
-      audio.current?.stop();
-      howl.off("end");
-      howl.off("load");
+      if (!audio) {
+        return;
+      }
+      audio.stop();
+      audio.off("end");
+      audio.off("load");
       cancelAnimationFrame(id);
     };
-  }, [livingAudioUrl, pause, play]);
+  }, [audio, pause, play]);
 
   useEffect(() => {
-    console.log("audio.current", audio.current);
-    if (!audio.current) {
+    if (!audio) {
       return;
     }
 
-    if (playerState === "stop") {
-      return;
-    } else if (playerState === "play") {
-      audio.current.play();
-    } else if (playerState === "pause") {
-      audio.current.pause();
-    } else {
-      audio.current.pause();
+    switch (playerState) {
+      case "play":
+        audio.play();
+        break;
+      case "pause":
+        audio.pause();
+        break;
+      default:
+        return;
     }
-  }, [playerState, clearDownloadingCount, downloadingCount]);
+  }, [playerState, audio]);
 
   return (
     <div className="w-full h-full relative bg-gradient-to-bl from-green-400 to-blue-500 p-16">
@@ -101,15 +88,20 @@ const ControlPanel: React.FC<Props> = ({ musicTitle }) => {
       <div className="main"></div>
       <div className="control-bar flex absolute left-0 right-0 bottom-16 w-1/2 my-0 mx-auto justify-between text-cyan-50 text-5xl">
         <Icon name="audio-high"></Icon>
-        <Icon name="previous"></Icon>
+        <Icon
+          name="previous"
+          onClick={() => {
+            prev();
+          }}
+        ></Icon>
         <Icon
           name={mapIcons[playerState]}
           onClick={() => {
-            if (!audio.current) {
+            if (!audio) {
               return;
             }
             switch (playerState) {
-              case "load": {
+              case "loading": {
                 break;
               }
               case "play": {
@@ -123,7 +115,12 @@ const ControlPanel: React.FC<Props> = ({ musicTitle }) => {
             }
           }}
         ></Icon>
-        <Icon name="next"></Icon>
+        <Icon
+          name="next"
+          onClick={() => {
+            next();
+          }}
+        ></Icon>
         <Icon
           name="list"
           onClick={() => {

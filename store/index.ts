@@ -1,50 +1,56 @@
 // zustand store
+import { Howl } from "howler";
 import create, { SetState } from "zustand";
 import { PlaylistItem, PlayListData } from "../components/PlayList";
-import { get } from "../utils/fetcher";
-import fetchMusic from "../utils/fetchMusic";
+import loadMusic from "../utils/loadMusic";
+
+import { modulo, __, compose, add } from "ramda";
 
 type MusicStore = {
   playList: PlayListData | null;
-  // downloadedPool: Array<string>;
-  downloadingCount: number;
+  // downloadingCount: number;
+  // clearDownloadingCount: () => void;
+
+  liveItem: PlaylistItem | null;
+  audio: Howl | null;
+  playerState: "loading" | "play" | "pause" | "stop";
+  showList: boolean;
+
+  setShowList: (show: boolean) => void;
   setPlayList: (data: PlayListData) => void;
-  liveItemId: string | null;
-  livingAudioUrl: string | null;
+  load: (itemId: PlaylistItem) => Promise<void>;
   pause: () => void;
   play: () => void;
   stop: () => void;
-  load: (itemId: string) => Promise<void>;
-  clearDownloadingCount: () => void;
-  blob: Blob | null;
-  playerState: "load" | "play" | "pause" | "stop";
-  showList: boolean;
-  setShowList: (show: boolean) => void;
+  next: () => void;
+  prev: () => void;
 };
 
-const useMusicStore = create<MusicStore>((set, getter) => ({
-  liveItemId: null,
-  // downloadedPool: [],
-  downloadingCount: 0,
+type ntn = (num: number) => number;
 
+const loopAdd = (upper: number): ntn => compose(modulo(__, upper), add(1));
+const loopMinus = (upper: number): ntn =>
+  compose(modulo(__, upper), add(upper - 1));
+
+const useMusicStore = create<MusicStore>((set, getter) => ({
+  liveItem: null,
+  audio: null,
   playerState: "stop",
   playList: null,
-  livingAudioUrl: null,
   showList: false,
-  blob: null,
-
-  clearDownloadingCount: () => {
-    set({
-      downloadingCount: 0,
-    });
-  },
+  // downloadingCount: 0,
+  // clearDownloadingCount: () => {
+  //   set({
+  //     downloadingCount: 0,
+  //   });
+  // },
 
   setShowList: (show: boolean) => {
-    console.log("123123");
     set({
       showList: show,
     });
   },
+
   setPlayList: (playList: PlayListData) => {
     set({
       playList,
@@ -63,11 +69,11 @@ const useMusicStore = create<MusicStore>((set, getter) => ({
     });
   },
 
-  load: async (itemId: string) => {
+  load: async (item: PlaylistItem) => {
     let playList = getter().playList;
     let willPlayItem =
-      playList?.find((item) => {
-        return item.id === itemId;
+      playList?.find((it) => {
+        return item === it;
       }) ?? null;
 
     if (!willPlayItem) {
@@ -75,40 +81,48 @@ const useMusicStore = create<MusicStore>((set, getter) => ({
     }
 
     set({
-      playerState: "load",
-      downloadingCount: getter().downloadingCount + 1,
+      liveItem: item,
+      playerState: "loading",
+      audio: null,
+      // downloadingCount: getter().downloadingCount + 1,
     });
 
-    let blob = await fetchMusic(willPlayItem);
-
-    // let blob = await get(willPlayItem.src, {
-    //   responseType: "arraybuffer",
-    //   onDownloadProgress: (progressEvent) => {},
-    // }).then((res: any) => {
-    //   return new Blob([res.data], { type: "audio/mpeg" });
-    // });
-
-    let url = URL.createObjectURL(blob);
+    // TODO: fix the sequence of async
+    let audio: Howl = await loadMusic(willPlayItem);
 
     set({
-      liveItemId: itemId,
-      livingAudioUrl: url,
+      audio,
     });
   },
 
   next: () => {
-    // liveItemId
-    // let playingItem =
-    //   playList?.find((item) => {
-    //     return item.id === liveItemId;
-    //   }) ?? null;
+    let { playList, liveItem, load } = getter();
+    if (!playList) {
+      return;
+    }
+    let index = playList.findIndex((item) => {
+      return item === liveItem;
+    });
+    let nextIndex = loopAdd(playList.length)(index);
+    load(playList[nextIndex]);
+  },
+
+  prev: () => {
+    let { playList, liveItem, load } = getter();
+    if (!playList) {
+      return;
+    }
+    let index = playList.findIndex((item) => {
+      return item === liveItem;
+    });
+    let prevIndex = loopMinus(playList.length)(index);
+    load(playList[prevIndex]);
   },
 
   pause: () => {
     set({
       playerState: "pause",
     });
-    // set({ bears: 0 })
   },
 }));
 

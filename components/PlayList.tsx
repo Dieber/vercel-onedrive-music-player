@@ -16,11 +16,10 @@ export type PlayListData = Array<PlaylistItem>;
 
 interface Props {
   playListData: PlayListData;
-  // onClickItem: (item: PlaylistItem) => void;
 }
 
 const PlayList: React.FC<Props> = ({ playListData }) => {
-  const { pause, load, play, playerState, liveItemId, setShowList } =
+  const { pause, load, play, playerState, liveItem, setShowList } =
     useMusicStore();
 
   return (
@@ -48,11 +47,14 @@ const PlayList: React.FC<Props> = ({ playListData }) => {
             <div
               className="px-8 h-20 flex items-center border-b-2 text-lg"
               key={item.id}
+              style={{
+                background: item === liveItem ? "#efefef" : "white",
+              }}
             >
               <div
                 className="cursor-pointer"
                 onClick={(e) => {
-                  if (item.id === liveItemId) {
+                  if (item === liveItem) {
                     switch (playerState) {
                       case "play": {
                         pause();
@@ -63,11 +65,11 @@ const PlayList: React.FC<Props> = ({ playListData }) => {
                         break;
                       }
                       case "stop": {
-                        load(item.id);
+                        load(item);
                       }
                     }
                   } else {
-                    load(item.id);
+                    load(item);
                   }
                 }}
               >

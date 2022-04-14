@@ -5,13 +5,12 @@ import AppLayout from "../../components/AppLayout";
 import StepLayout from "../../components/pages/StepLayout";
 import { generateAuthorisationUrl } from "../../utils/token";
 import { useState } from "react";
-import { fetcher, post } from "../../libs/fetcher";
+import { post } from "../../utils/fetcher";
 
 const authUrl = generateAuthorisationUrl();
 
 export default function Step2() {
   const router = useRouter();
-  const from = Number(router.query.from as string) || 2;
 
   const [oAuthCode, setOAuthCode] = useState("");
 

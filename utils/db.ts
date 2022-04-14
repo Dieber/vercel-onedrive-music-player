@@ -1,10 +1,18 @@
+// import { IDBPDatabase, openDB } from "idb";
+
 import { openDB } from "idb";
 
-const dbPromise = openDB("keyval-store", 1, {
-  upgrade(db) {
-    db.createObjectStore("keyval");
-  },
-});
+//
+const dbPromise: any =
+  typeof window === "undefined"
+    ? () => {}
+    : openDB("keyval-store", 1, {
+        upgrade(db: any) {
+          db.createObjectStore("keyval");
+        },
+      });
+
+// TODO: add LRU
 
 export async function get(key: string) {
   return (await dbPromise).get("keyval", key);

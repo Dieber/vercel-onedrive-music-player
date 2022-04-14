@@ -9,17 +9,9 @@ import { Howl, Howler } from "howler";
 import { map, T, F, over, lensProp, find, propEq, isNil } from "ramda";
 
 // import ControlPanel from "../components/ControlPanel";
-import { PlayListData, PlaylistItem } from "../components/PlayList";
+import PlayList, { PlayListData, PlaylistItem } from "../components/PlayList";
 import useMusicStore from "../store";
-import dynamic from "next/dynamic";
-
-const ControlPanel = dynamic(() => import("../components/ControlPanel"), {
-  ssr: false,
-});
-
-const PlayList = dynamic(() => import("../components/PlayList"), {
-  ssr: false,
-});
+import ControlPanel from "../components/ControlPanel";
 
 let mapList = (item: PlaylistItem) =>
   map((it: PlaylistItem) => {
