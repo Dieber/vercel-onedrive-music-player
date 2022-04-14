@@ -11,7 +11,9 @@ type MusicStore = {
   loadThenPlay: (itemId: string) => void;
   pause: () => void;
   play: () => void;
+  stop: () => void;
   load: (itemId: string) => Promise<void>;
+  blob: Blob | null;
   playerState: "load" | "play" | "pause" | "stop";
   showList: boolean;
   setShowList: (show: boolean) => void;
@@ -23,6 +25,7 @@ const useMusicStore = create<MusicStore>((set, getter) => ({
   playList: null,
   livingAudioUrl: null,
   showList: false,
+  blob: null,
   setShowList: (show: boolean) => {
     console.log("123123");
     set({
@@ -38,6 +41,12 @@ const useMusicStore = create<MusicStore>((set, getter) => ({
   play: () => {
     set({
       playerState: "play",
+    });
+  },
+
+  stop: () => {
+    set({
+      playerState: "stop",
     });
   },
 
@@ -61,9 +70,12 @@ const useMusicStore = create<MusicStore>((set, getter) => ({
     });
 
     set({
-      livingAudioUrl: URL.createObjectURL(blob),
       liveItemId: itemId,
+      livingAudioUrl: URL.createObjectURL(blob),
+      // blob,
     });
+
+    // return blob
   },
 
   next: () => {
@@ -75,8 +87,7 @@ const useMusicStore = create<MusicStore>((set, getter) => ({
   },
 
   loadThenPlay: async (itemId) => {
-    await getter().load(itemId);
-    getter().play();
+    getter().load(itemId);
   },
   pause: () => {
     set({

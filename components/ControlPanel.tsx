@@ -28,10 +28,10 @@ const ControlPanel: React.FC<Props> = ({
   // totalTime,
   // musicTitle,
 }) => {
-  let { playerState, livingAudioUrl, pause, play, setShowList } =
+  let { playerState, livingAudioUrl, pause, play, setShowList, stop } =
     useMusicStore();
   let [currentTime, setCurrentTime] = useState<number | null>(null);
-  let [totalTime, setTotalTime] = useState<number | null>(0);
+  let [totalTime, setTotalTime] = useState<number | null>(null);
 
   let audio = useRef<Howl | null>(null);
 
@@ -44,18 +44,30 @@ const ControlPanel: React.FC<Props> = ({
       format: ["mp3"],
     });
 
+    howl.on("load", function () {
+      setTotalTime(howl.duration());
+      play();
+    });
+
     howl.on("end", function () {
       pause();
     });
 
     audio.current = howl;
-    return () => {
-      audio.current!.stop();
-      howl.off("end");
-    };
-  }, [livingAudioUrl, pause]);
 
-  // console.log(audio?.duration(), "xxxx");
+    let raf = () => {
+      setCurrentTime(howl.seek());
+      requestAnimationFrame(raf);
+    };
+    let id = requestAnimationFrame(raf);
+
+    return () => {
+      audio.current?.stop();
+      howl.off("end");
+      howl.off("load");
+      cancelAnimationFrame(id);
+    };
+  }, [livingAudioUrl, pause, play]);
 
   useEffect(() => {
     if (!audio.current) {
@@ -64,6 +76,7 @@ const ControlPanel: React.FC<Props> = ({
 
     if (playerState === "stop") {
       return;
+      // audio.current.stop();
     } else if (playerState === "play") {
       audio.current.play();
     } else if (playerState === "pause") {
