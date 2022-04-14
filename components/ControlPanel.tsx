@@ -41,8 +41,11 @@ const ControlPanel: React.FC<Props> = ({ musicTitle }) => {
       pause();
     });
 
+    console.log(audio.duration());
+
     let raf = () => {
       if (audio) {
+        setTotalTime(audio.duration());
         setCurrentTime(audio.seek());
         requestAnimationFrame(raf);
       }

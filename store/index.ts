@@ -70,7 +70,7 @@ const useMusicStore = create<MusicStore>((set, getter) => ({
   },
 
   load: async (item: PlaylistItem) => {
-    let playList = getter().playList;
+    let { playList } = getter();
     let willPlayItem =
       playList?.find((it) => {
         return item === it;
