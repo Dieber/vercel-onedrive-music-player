@@ -1,18 +1,21 @@
 // zustand store
 import create, { SetState } from "zustand";
 import { PlaylistItem, PlayListData } from "../components/PlayList";
-import { get } from "../libs/fetcher";
+import { get } from "../utils/fetcher";
+import fetchMusic from "../utils/fetchMusic";
 
 type MusicStore = {
   playList: PlayListData | null;
+  // downloadedPool: Array<string>;
+  downloadingCount: number;
   setPlayList: (data: PlayListData) => void;
   liveItemId: string | null;
   livingAudioUrl: string | null;
-  loadThenPlay: (itemId: string) => void;
   pause: () => void;
   play: () => void;
   stop: () => void;
   load: (itemId: string) => Promise<void>;
+  clearDownloadingCount: () => void;
   blob: Blob | null;
   playerState: "load" | "play" | "pause" | "stop";
   showList: boolean;
@@ -21,11 +24,21 @@ type MusicStore = {
 
 const useMusicStore = create<MusicStore>((set, getter) => ({
   liveItemId: null,
+  // downloadedPool: [],
+  downloadingCount: 0,
+
   playerState: "stop",
   playList: null,
   livingAudioUrl: null,
   showList: false,
   blob: null,
+
+  clearDownloadingCount: () => {
+    set({
+      downloadingCount: 0,
+    });
+  },
+
   setShowList: (show: boolean) => {
     console.log("123123");
     set({
@@ -50,32 +63,37 @@ const useMusicStore = create<MusicStore>((set, getter) => ({
     });
   },
 
-  load: async (itemId: any) => {
+  load: async (itemId: string) => {
     let playList = getter().playList;
     let willPlayItem =
       playList?.find((item) => {
         return item.id === itemId;
       }) ?? null;
+
     if (!willPlayItem) {
       return;
     }
+
     set({
       playerState: "load",
+      downloadingCount: getter().downloadingCount + 1,
     });
-    let blob = await get(willPlayItem.src, {
-      responseType: "arraybuffer",
-      onDownloadProgress: (progressEvent) => {},
-    }).then((res: any) => {
-      return new Blob([res.data], { type: "audio/mpeg" });
-    });
+
+    let blob = await fetchMusic(willPlayItem);
+
+    // let blob = await get(willPlayItem.src, {
+    //   responseType: "arraybuffer",
+    //   onDownloadProgress: (progressEvent) => {},
+    // }).then((res: any) => {
+    //   return new Blob([res.data], { type: "audio/mpeg" });
+    // });
+
+    let url = URL.createObjectURL(blob);
 
     set({
       liveItemId: itemId,
-      livingAudioUrl: URL.createObjectURL(blob),
-      // blob,
+      livingAudioUrl: url,
     });
-
-    // return blob
   },
 
   next: () => {
@@ -86,9 +104,6 @@ const useMusicStore = create<MusicStore>((set, getter) => ({
     //   }) ?? null;
   },
 
-  loadThenPlay: async (itemId) => {
-    getter().load(itemId);
-  },
   pause: () => {
     set({
       playerState: "pause",

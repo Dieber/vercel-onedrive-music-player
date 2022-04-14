@@ -8,8 +8,8 @@ import { siteConfig, apiConfig } from "../../config/index.js";
 import AppLayout from "../../components/AppLayout";
 import Step from "../../components/Step";
 import Link from "next/link";
-import { camelToConstantCase, camelToSnakeCase } from "../../libs";
-import { fetcher } from "../../libs/fetcher";
+import { camelToConstantCase, camelToSnakeCase } from "../../utils/case";
+import { fetcher } from "../../utils/fetcher";
 import useSWR from "swr";
 import StepLayout from "../../components/pages/StepLayout";
 

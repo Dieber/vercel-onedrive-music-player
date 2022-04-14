@@ -2,26 +2,24 @@ import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import useSWR, { mutate } from "swr";
-import { get, post } from "../libs/fetcher";
+import { get, post } from "../utils/fetcher";
 import styles from "../styles/Home.module.css";
 import { Howl, Howler } from "howler";
 // import mp3 from "../demo/shit.mp3";
 import { map, T, F, over, lensProp, find, propEq, isNil } from "ramda";
 
-import ControlPanel from "../components/ControlPanel";
-import PlayList, { PlayListData, PlaylistItem } from "../components/PlayList";
+// import ControlPanel from "../components/ControlPanel";
+import { PlayListData, PlaylistItem } from "../components/PlayList";
 import useMusicStore from "../store";
+import dynamic from "next/dynamic";
 
-// function blobToArrayBuffer(blob) {
-//   return new Promise((resolve, reject) => {
-//     const reader = new FileReader();
-//     reader.addEventListener("loadend", (e) => {
-//       resolve(reader.result);
-//     });
-//     reader.addEventListener("error", reject);
-//     reader.readAsArrayBuffer(blob);
-//   });
-// }
+const ControlPanel = dynamic(() => import("../components/ControlPanel"), {
+  ssr: false,
+});
+
+const PlayList = dynamic(() => import("../components/PlayList"), {
+  ssr: false,
+});
 
 let mapList = (item: PlaylistItem) =>
   map((it: PlaylistItem) => {

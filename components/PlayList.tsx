@@ -20,7 +20,7 @@ interface Props {
 }
 
 const PlayList: React.FC<Props> = ({ playListData }) => {
-  const { pause, loadThenPlay, play, playerState, liveItemId, setShowList } =
+  const { pause, load, play, playerState, liveItemId, setShowList } =
     useMusicStore();
 
   return (
@@ -63,11 +63,11 @@ const PlayList: React.FC<Props> = ({ playListData }) => {
                         break;
                       }
                       case "stop": {
-                        loadThenPlay(item.id);
+                        load(item.id);
                       }
                     }
                   } else {
-                    loadThenPlay(item.id);
+                    load(item.id);
                   }
                 }}
               >

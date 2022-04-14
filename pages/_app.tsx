@@ -2,7 +2,7 @@ import { AppInitialProps } from "next/app";
 import Head from "next/head";
 import Script from "next/script";
 import { SWRConfig } from "swr";
-import { fetcher } from "../libs/fetcher";
+import { fetcher } from "../utils/fetcher";
 import "../styles/globals.css";
 
 const MyApp = ({ Component, pageProps }: any) => {
