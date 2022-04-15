@@ -1,26 +1,35 @@
-import { useState } from "react";
-
 interface Props {
-  styleName: string;
+  themeName: keyof typeof ThemeMap;
 }
 
+// tailwindcss optimization
 const SpringButton: React.FC = ({ children }) => {
-  return <button>{children}</button>;
+  return <button className="">{children}</button>;
 };
 
-const Button: React.FC<Props> = ({ styleName }) => {
-  //
+const SummerButton: React.FC = ({ children }) => {
+  return <button className="">{children}</button>;
+};
 
-  // let [stat]
+const FallButton: React.FC = ({ children }) => {
+  return <button className="">{children}</button>;
+};
 
-  return (
-    <div>
-      <div className="">123</div>
-      <div className="">123</div>
-      {/* <div className="">123</div>
-      <div className="">123</div> */}
-    </div>
-  );
+const WinterButton: React.FC = ({ children }) => {
+  return <button className="">{children}</button>;
+};
+
+const ThemeMap = {
+  spring: SpringButton,
+  summer: SummerButton,
+  fall: FallButton,
+  winter: WinterButton,
+};
+
+const Button: React.FC<Props> = ({ themeName, children }) => {
+  let FinalButton = ThemeMap[themeName];
+
+  return <div>{<FinalButton>{children}</FinalButton>}</div>;
 };
 
 export default Button;
