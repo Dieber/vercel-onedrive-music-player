@@ -9,9 +9,13 @@ import AppLayout from "../../components/AppLayout";
 import Step from "../../components/Step";
 import Link from "next/link";
 import { camelToConstantCase, camelToSnakeCase } from "../../utils/caster";
-import { fetcher } from "../../utils/fetcher";
+import { fetcher, post } from "../../utils/fetcher";
 import useSWR from "swr";
 import StepLayout from "../../components/pages/StepLayout";
+import { generateAuthorisationUrl } from "../../utils/token";
+import { useState } from "react";
+
+const authUrl = generateAuthorisationUrl();
 
 type CheckIfRedisAvaliableResponse = {
   redis: boolean;
@@ -30,7 +34,6 @@ const ConfigTable = () => {
               {camelToConstantCase(key)}
             </div>
             <div className="flex-1 text-left">{value}</div>
-            {/* {key}-{value} */}
           </div>
         );
       })}
@@ -60,6 +63,7 @@ export default function Step1() {
 
   const router = useRouter();
   const from = Number(router.query.from as string) || 1;
+  const [oAuthCode, setOAuthCode] = useState("");
 
   return (
     <AppLayout>
@@ -74,10 +78,46 @@ export default function Step1() {
                 is wrong.
               </p>
               <ConfigTable></ConfigTable>
+              <div>
+                <div className="w-full">
+                  <button
+                    onClick={() => {
+                      window.open(authUrl);
+                    }}
+                  >
+                    OAuth OneDrive Account!
+                  </button>
+                </div>
+                <div>
+                  <input
+                    className="text-black"
+                    value={oAuthCode}
+                    onChange={(e) => {
+                      setOAuthCode(e.target.value);
+                    }}
+                  ></input>
+                  <button
+                    disabled={!oAuthCode}
+                    onClick={() => {
+                      if (!oAuthCode) {
+                        return;
+                      }
 
-              <Link passHref href="/setup/step2?from=1">
-                <button>Go Step2</button>
-              </Link>
+                      post(`/api/storeTokenByOAuth`, {
+                        code: oAuthCode,
+                      })
+                        .then((e) => {
+                          console.log(e);
+                        })
+                        .catch((e) => {
+                          console.log("catch", e);
+                        });
+                    }}
+                  >
+                    Store OAuth!
+                  </button>
+                </div>
+              </div>
             </>
           ) : (
             <RedisInfo></RedisInfo>

@@ -6,13 +6,10 @@ module.exports = {
   theme: {
     extend: {
       colors: {
-        "dark-mode-basic-bg": "rgb(53, 54, 57)",
-        "dark-mode-basic-bg-lighten": "rgb(88, 87, 89)",
-        "player-bg": "rgb(19,21,26)",
-
-        // "player-bg": "rgb(22,23,36)",
+        "dark-mode-basic-bg": "black",
+        "dark-mode-basic-bg-lighten": "#111",
+        "player-bg": "black",
         "player-bg-lighten": "rgb(45 51 88)",
-        // "dark-mode-basic-bg": "525354",
       },
     },
   },

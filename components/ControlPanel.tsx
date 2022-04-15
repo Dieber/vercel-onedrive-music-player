@@ -28,8 +28,6 @@ const ControlPanel: React.FC<Props> = ({ musicTitle }) => {
   let [currentTime, setCurrentTime] = useState<number | null>(null);
   let [totalTime, setTotalTime] = useState<number | null>(null);
 
-  // let audio = useRef<Howl | null>(null);
-
   // when audio is loaded
   useEffect(() => {
     if (!audio) {
@@ -41,11 +39,9 @@ const ControlPanel: React.FC<Props> = ({ musicTitle }) => {
       pause();
     });
 
-    console.log(audio.duration());
-
+    setTotalTime(audio.duration());
     let raf = () => {
       if (audio) {
-        setTotalTime(audio.duration());
         setCurrentTime(audio.seek());
         requestAnimationFrame(raf);
       }

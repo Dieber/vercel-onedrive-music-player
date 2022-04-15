@@ -47,7 +47,9 @@ const loadMusic = (willPlayItem: PlaylistItem) => {
       format: ["mp3"],
     });
 
-    resolve(howl);
+    howl.on("load", () => {
+      resolve(howl);
+    });
   });
 };
 export default loadMusic;
