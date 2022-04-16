@@ -144,7 +144,8 @@ const useMusicStore = create<
 // side Effect in store
 useMusicStore.subscribe(
   (state) => state.audio,
-  (_, previousAudio) => {
+  (audio, previousAudio) => {
+    audio?.play();
     previousAudio?.stop();
   }
 );

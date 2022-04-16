@@ -43,19 +43,18 @@ const loadMusic = (willPlayItem: PlaylistItem) => {
     let tags = await readTags(finalAB);
     console.log(tags);
     let url = URL.createObjectURL(blob);
-    let howl = new Howl({
+    let audio = new Howl({
       src: [url],
       format: ["mp3"],
     });
 
-    howl.on("load", () => {
-      useMusicStore.getState().play();
-      resolve(howl);
+    audio.on("load", () => {
+      resolve(audio);
     });
 
-    howl.on("end", function () {
-      howl.off("end");
-      howl.off("load");
+    audio.on("end", function () {
+      audio.off("end");
+      audio.off("load");
       useMusicStore.getState().next();
     });
   });
