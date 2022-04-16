@@ -1,6 +1,6 @@
 import axios from "axios";
 import { apiConfig } from "../config";
-import { getOdAuthTokens, storeOdAuthTokens } from "./oauth";
+import { get } from "./fetcher";
 
 // Generate the Microsoft OAuth 2.0 authorization URL, used for requesting the authorisation code
 export function generateAuthorisationUrl(): string {
@@ -20,7 +20,7 @@ export function generateAuthorisationUrl(): string {
 
 export async function getAuthPersonInfo(accessToken: string) {
   const profileApi = apiConfig.driveApi.replace("/drive", "");
-  return axios.get(profileApi, {
+  return get(profileApi, {
     headers: {
       Authorization: `Bearer ${accessToken}`,
     },

@@ -2,15 +2,10 @@ import Head from "next/head";
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import useSWR, { mutate } from "swr";
-import { get, post } from "../utils/fetcher";
-import styles from "../styles/Home.module.css";
-import { Howl, Howler } from "howler";
-// import mp3 from "../demo/shit.mp3";
-import { map, T, F, over, lensProp, find, propEq, isNil } from "ramda";
 
 // import ControlPanel from "../components/ControlPanel";
 import PlayList, { PlayListData, PlaylistItem } from "../components/PlayList";
-import ControlPanel from "../components/ControlPanel";
+import Player from "../components/Player";
 import useMusicStore from "../store/useMusicStore";
 
 export default function Home() {
@@ -41,17 +36,8 @@ export default function Home() {
       </Head>
 
       <main className="w-full h-full ">
-        <ControlPanel
-          musicTitle={""}
-          onPause={() => {}}
-          onPlay={() => {}}
-        ></ControlPanel>
-        {showList && (
-          <PlayList
-            playListData={playList ?? []}
-            // onClickItem={clickItemHandler}
-          ></PlayList>
-        )}
+        <Player musicTitle={""} onPause={() => {}} onPlay={() => {}}></Player>
+        {showList && <PlayList playListData={playList ?? []}></PlayList>}
       </main>
     </>
   );

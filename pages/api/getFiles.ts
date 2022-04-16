@@ -6,8 +6,6 @@ import axios from "axios";
 
 import { filter, lensPath, over, isNil, o, prop } from "ramda";
 
-//9D7086E13CFD466C!44759
-
 const basePath = pathPosix.resolve("/", siteConfig.baseDirectory);
 
 const itemFilterFolder = filter(o(isNil, prop("folder")));
