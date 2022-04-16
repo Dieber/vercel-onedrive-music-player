@@ -17,3 +17,12 @@ export function generateAuthorisationUrl(): string {
 
   return `${authUrl}?${params.toString()}`;
 }
+
+export async function getAuthPersonInfo(accessToken: string) {
+  const profileApi = apiConfig.driveApi.replace("/drive", "");
+  return axios.get(profileApi, {
+    headers: {
+      Authorization: `Bearer ${accessToken}`,
+    },
+  });
+}

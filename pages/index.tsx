@@ -10,13 +10,8 @@ import { map, T, F, over, lensProp, find, propEq, isNil } from "ramda";
 
 // import ControlPanel from "../components/ControlPanel";
 import PlayList, { PlayListData, PlaylistItem } from "../components/PlayList";
-import useMusicStore from "../store";
 import ControlPanel from "../components/ControlPanel";
-
-let mapList = (item: PlaylistItem) =>
-  map((it: PlaylistItem) => {
-    return over(lensProp("isPlaying"), it === item ? T : F, it);
-  });
+import useMusicStore from "../store/useMusicStore";
 
 export default function Home() {
   const { data: filesList } = useSWR("/api/getFiles");

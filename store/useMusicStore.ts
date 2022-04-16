@@ -38,12 +38,6 @@ const useMusicStore = create<MusicStore>((set, getter) => ({
   playerState: "stop",
   playList: null,
   showList: false,
-  // downloadingCount: 0,
-  // clearDownloadingCount: () => {
-  //   set({
-  //     downloadingCount: 0,
-  //   });
-  // },
 
   setShowList: (show: boolean) => {
     set({

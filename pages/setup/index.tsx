@@ -11,10 +11,11 @@ import Link from "next/link";
 import { camelToConstantCase, camelToSnakeCase } from "../../utils/caster";
 import { fetcher, post } from "../../utils/fetcher";
 import useSWR from "swr";
-import StepLayout from "../../components/pages/StepLayout";
-import { generateAuthorisationUrl } from "../../utils/token";
+// import StepLayout from "../../components/pages/StepLayout";
+import { generateAuthorisationUrl, getAuthPersonInfo } from "../../utils/token";
 import { useState } from "react";
-import Button from "../../components/Button";
+import Button, { ThemeType } from "../../components/Button";
+import useThemeStore, { Theme } from "../../store/useThemeStore";
 
 const authUrl = generateAuthorisationUrl();
 
@@ -25,7 +26,7 @@ type CheckIfRedisAvaliableResponse = {
 const ConfigTable = () => {
   return (
     <div className="border border-player-bg-lighten rounded-md px-4 py-2 my-4">
-      {Object.entries(apiConfig).map(([key, value], index) => {
+      {Object.entries(apiConfig).map(([key, value]) => {
         return (
           <div
             className="flex w-full overflow-hidden h-[32px] leading-[32px]"
@@ -34,7 +35,9 @@ const ConfigTable = () => {
             <div className="grow-0 shrink-0 basis-[250px] overflow-hidden text-left">
               {camelToConstantCase(key)}
             </div>
-            <div className="flex-1 text-left">{value}</div>
+            <div className="flex-1 text-left ">
+              <div>{value}</div>
+            </div>
           </div>
         );
       })}
@@ -62,26 +65,70 @@ export default function Step1() {
     "/api/checkIfRedisAvaliable"
   );
 
-  const router = useRouter();
-  const from = Number(router.query.from as string) || 1;
   const [oAuthCode, setOAuthCode] = useState("");
+
+  const theme = useThemeStore((state) => state.theme);
+  const setTheme = useThemeStore((state) => state.setTheme);
+
+  const handleStoreOAuthToken = async () => {
+    if (!oAuthCode) {
+      return;
+    }
+
+    const { data, status } = await getAuthPersonInfo(oAuthCode);
+    if (status !== 200) {
+      return;
+    }
+    if (data.userPrincipalName !== apiConfig.userName) {
+      return;
+    }
+
+    post(`/api/storeTokenByOAuth`, {
+      code: oAuthCode,
+    })
+      .then((e) => {
+        console.log(e);
+      })
+      .catch((e) => {
+        console.log("catch", e);
+      });
+  };
+
+  const handleChangeTheme = (theme: Theme) => {
+    setTheme(theme);
+  };
 
   return (
     <AppLayout>
-      <StepLayout from={1} to={1}>
-        <div>
-          {true || data?.redis ? (
-            <>
-              <p className="my-2 text-left">
-                {" "}
-                Please check out deploy info below if it&apos;s correct, You can
-                modify /config.js then deploy it again when you find something
-                is wrong.
-              </p>
-              <ConfigTable></ConfigTable>
-              <div>
+      <main className="text-white flex justify-center align-middle">
+        <div className="bg-player-bg  w-full sm:w-1/2	 p-8 m-8 rounded-md black ">
+          <h1 className="text-3xl"> Welcome to your cloud music</h1>
+
+          <p className="my-2 text">
+            {" "}
+            Here are few steps to set before you enjoy...
+          </p>
+          {/* <Step className={"my-0 mx-auto"} from={from} to={to}></Step> */}
+          <div>
+            {true || data?.redis ? (
+              <>
+                <p className="my-2 text-left">
+                  {" "}
+                  Please check out deploy info below if it&apos;s correct, You
+                  can modify /config.js then deploy it again when you find
+                  something is wrong.
+                </p>
+                <ConfigTable></ConfigTable>
+                {/* Step1 */}
+
+                <p>
+                  <b>Step1</b>: login your Microsoft account and copy the
+                  callback url
+                </p>
+
                 <div className="w-full">
                   <Button
+                    themeName={theme}
                     onClick={() => {
                       window.open(authUrl);
                     }}
@@ -89,8 +136,13 @@ export default function Step1() {
                     OAuth OneDrive Account!
                   </Button>
                 </div>
+                {/* Step2 */}
+                <p>
+                  <b>Step2</b>: paste your authorisation code to the link and
+                  click the button
+                </p>
 
-                <div className="w-full flex my-2">
+                <div className="w-full flex my-2 items-center">
                   <input
                     className="flex-1 mr-2 px-4 py-2 rounded-lg text-black"
                     value={oAuthCode}
@@ -101,33 +153,50 @@ export default function Step1() {
                   ></input>
                   <Button
                     // disabled={!oAuthCode}
-                    onClick={() => {
-                      if (!oAuthCode) {
-                        return;
-                      }
-
-                      post(`/api/storeTokenByOAuth`, {
-                        code: oAuthCode,
-                      })
-                        .then((e) => {
-                          console.log(e);
-                        })
-                        .catch((e) => {
-                          console.log("catch", e);
-                        });
-                    }}
-                    themeName={"spring"}
+                    themeName={theme}
+                    onClick={handleStoreOAuthToken}
                   >
-                    Store OAuth!
+                    Store token!
                   </Button>
                 </div>
-              </div>
-            </>
-          ) : (
-            <RedisInfo></RedisInfo>
-          )}
+                {/* Step3 */}
+                <div>
+                  <p>
+                    <b>Step3</b>: Select one of your favourate theme color!
+                  </p>
+                  <div className="flex w-full justify-between">
+                    <span className="">
+                      {(
+                        ["spring", "summer", "fall", "winter"] as ThemeType
+                      ).map((item) => {
+                        return (
+                          <span className={""} key={item}>
+                            <Button
+                              onClick={() => {
+                                handleChangeTheme(item);
+                              }}
+                              themeName={item}
+                              style={{
+                                marginRight: 16,
+                                width: 40,
+                                height: 40,
+                                borderRadius: 20,
+                              }}
+                            ></Button>
+                          </span>
+                        );
+                      })}
+                    </span>
+                    <Button themeName={theme}>Start →</Button>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <RedisInfo></RedisInfo>
+            )}
+          </div>
         </div>
-      </StepLayout>
+      </main>
     </AppLayout>
   );
 }

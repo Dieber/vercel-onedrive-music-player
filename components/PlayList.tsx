@@ -1,9 +1,9 @@
 // import
 
 import { Howl } from "howler";
-import useMusicStore from "../store";
 import Icon from "./Icon";
 import Image from "next/image";
+import useMusicStore from "../store/useMusicStore";
 
 export type PlaylistItem = {
   src: string;

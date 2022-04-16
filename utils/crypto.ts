@@ -13,7 +13,6 @@ export function decryptToken(encryptClientSecret64: string) {
   decipher.finish();
   // outputs decrypted hex
   const bytes = decipher.output.toString();
-  // console.log(Buffer.from(bytes, "hex").toString());
   return bytes;
   // return forge.util.decodeUtf8(bytes);
 }

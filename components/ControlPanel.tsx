@@ -2,8 +2,8 @@
 
 import { Howl } from "howler";
 import { useEffect, useMemo, useRef, useState } from "react";
+import useMusicStore from "../store/useMusicStore";
 import { get } from "../utils/fetcher";
-import useMusicStore from "../store";
 import Icon from "./Icon";
 // import useRaf from "../hooks/useRaf";
 
