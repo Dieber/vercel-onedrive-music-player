@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import useMusicStore from "../../store/useMusicStore";
 
 const StatusBar: React.FC = () => {
-  let { playerState, audio, pause, play } = useMusicStore();
+  let { playerState, audio } = useMusicStore();
+  let { pause, play } = useMusicStore();
 
   let [currentTime, setCurrentTime] = useState<number | null>(null);
   let [totalTime, setTotalTime] = useState<number | null>(null);
@@ -12,11 +13,6 @@ const StatusBar: React.FC = () => {
     if (!audio) {
       return;
     }
-    play();
-
-    audio.on("end", function () {
-      pause();
-    });
 
     setTotalTime(audio.duration());
     let raf = () => {
@@ -29,15 +25,9 @@ const StatusBar: React.FC = () => {
     let id = requestAnimationFrame(raf);
 
     return () => {
-      if (!audio) {
-        return;
-      }
-      audio.stop();
-      audio.off("end");
-      audio.off("load");
       cancelAnimationFrame(id);
     };
-  }, [audio, pause, play]);
+  }, [audio]);
 
   useEffect(() => {
     if (!audio) {

@@ -4,6 +4,7 @@ import { get, set } from "./db";
 import { Howl } from "howler";
 
 import jsmediatags from "jsmediatags";
+import useMusicStore from "../store/useMusicStore";
 
 const readTags = (arrayBuffer: ArrayBuffer) => {
   let blob = new Blob([arrayBuffer]);
@@ -48,7 +49,14 @@ const loadMusic = (willPlayItem: PlaylistItem) => {
     });
 
     howl.on("load", () => {
+      useMusicStore.getState().play();
       resolve(howl);
+    });
+
+    howl.on("end", function () {
+      howl.off("end");
+      howl.off("load");
+      useMusicStore.getState().next();
     });
   });
 };
