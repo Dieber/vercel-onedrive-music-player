@@ -14,6 +14,7 @@ import useSWR from "swr";
 import StepLayout from "../../components/pages/StepLayout";
 import { generateAuthorisationUrl } from "../../utils/token";
 import { useState } from "react";
+import Button from "../../components/Button";
 
 const authUrl = generateAuthorisationUrl();
 
@@ -80,24 +81,26 @@ export default function Step1() {
               <ConfigTable></ConfigTable>
               <div>
                 <div className="w-full">
-                  <button
+                  <Button
                     onClick={() => {
                       window.open(authUrl);
                     }}
                   >
                     OAuth OneDrive Account!
-                  </button>
+                  </Button>
                 </div>
-                <div>
+
+                <div className="w-full flex my-2">
                   <input
-                    className="text-black"
+                    className="flex-1 mr-2 px-4 py-2 rounded-lg text-black"
                     value={oAuthCode}
+                    placeholder="http://localhost/?code=M.R3_BAY.c0..."
                     onChange={(e) => {
                       setOAuthCode(e.target.value);
                     }}
                   ></input>
-                  <button
-                    disabled={!oAuthCode}
+                  <Button
+                    // disabled={!oAuthCode}
                     onClick={() => {
                       if (!oAuthCode) {
                         return;
@@ -113,9 +116,10 @@ export default function Step1() {
                           console.log("catch", e);
                         });
                     }}
+                    themeName={"spring"}
                   >
                     Store OAuth!
-                  </button>
+                  </Button>
                 </div>
               </div>
             </>
