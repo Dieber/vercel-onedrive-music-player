@@ -1,6 +1,5 @@
 import create, { SetState } from "zustand";
-
-import { ThemeMap } from "../components/Button";
+import { ThemeMap } from "../constant";
 
 export type Theme = keyof typeof ThemeMap;
 

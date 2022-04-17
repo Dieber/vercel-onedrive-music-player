@@ -14,7 +14,7 @@ import useSWR from "swr";
 // import StepLayout from "../../components/pages/StepLayout";
 import { generateAuthorisationUrl, getAuthPersonInfo } from "../../utils/token";
 import { useState } from "react";
-import Button, { ThemeType } from "../../components/Button";
+import Button, { ThemeType } from "../../components/Basic/Button";
 import useThemeStore, { Theme } from "../../store/useThemeStore";
 
 const authUrl = generateAuthorisationUrl();
@@ -176,6 +176,7 @@ export default function Step1() {
                                 handleChangeTheme(item);
                               }}
                               themeName={item}
+                              title={item}
                               style={{
                                 marginRight: 16,
                                 width: 40,

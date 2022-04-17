@@ -1,5 +1,5 @@
 import useMusicStore from "../../store/useMusicStore";
-import Icon from "../Icon";
+import Icon from "../Basic/Icon";
 
 const mapIcons = {
   play: "pause",
@@ -9,7 +9,7 @@ const mapIcons = {
 };
 
 const ControlPanel: React.FC = () => {
-  let { playerState, audio, pause, play, next, prev, setShowList } =
+  let { playerState, audioData, pause, play, next, prev, setShowList } =
     useMusicStore();
 
   return (
@@ -24,7 +24,7 @@ const ControlPanel: React.FC = () => {
       <Icon
         name={mapIcons[playerState]}
         onClick={() => {
-          if (!audio) {
+          if (!audioData) {
             return;
           }
           switch (playerState) {

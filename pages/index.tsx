@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from "react";
 import useSWR, { mutate } from "swr";
 
 // import ControlPanel from "../components/ControlPanel";
-import PlayList, { PlayListData, PlaylistItem } from "../components/PlayList";
+import PlayList from "../components/PlayList";
 import Player from "../components/Player";
 import useMusicStore from "../store/useMusicStore";
 

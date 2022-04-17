@@ -1,18 +1,12 @@
 // import
 
 import { Howl } from "howler";
-import Icon from "./Icon";
+import Icon from "./Basic/Icon";
 import Image from "next/image";
-import useMusicStore from "../store/useMusicStore";
-
-export type PlaylistItem = {
-  src: string;
-  id: string;
-  name: string;
-  // src: string;
-};
-
-export type PlayListData = Array<PlaylistItem>;
+import useMusicStore, {
+  PlaylistItem,
+  PlayListData,
+} from "../store/useMusicStore";
 
 interface Props {
   playListData: PlayListData;

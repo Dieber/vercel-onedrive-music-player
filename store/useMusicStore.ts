@@ -1,11 +1,28 @@
 // zustand store
 import { Howl } from "howler";
 import create, { GetState, Mutate, SetState, StoreApi } from "zustand";
-import { PlaylistItem, PlayListData } from "../components/PlayList";
 import loadMusic from "../utils/loadMusic";
 import { subscribeWithSelector } from "zustand/middleware";
 
 import { modulo, __, compose, add } from "ramda";
+
+export type PlayListData = Array<PlaylistItem>;
+
+export type PlaylistItem = {
+  src: string;
+  id: string;
+  name: string;
+};
+
+export type AudioData = {
+  audio: Howl;
+  fileName: string;
+  title: string | null;
+  artist: string | null;
+  cover: any;
+};
+
+// type AudioData
 
 type MusicStore = {
   playList: PlayListData | null;
@@ -13,7 +30,7 @@ type MusicStore = {
   // clearDownloadingCount: () => void;
 
   liveItem: PlaylistItem | null;
-  audio: Howl | null;
+  audioData: AudioData | null;
   playerState: "loading" | "play" | "pause" | "stop";
   showList: boolean;
 
@@ -27,18 +44,6 @@ type MusicStore = {
   prev: () => void;
 };
 
-// type BearState = {
-//   paw: boolean
-//   snout: boolean
-//   fur: boolean
-// }
-// const useStore = create<
-//   BearState,
-//   SetState<BearState>,
-//   GetState<BearState>,
-//   Mutate<StoreApi<BearState>, [["zustand/subscribeWithSelector", never]]>
-// >(subscribeWithSelector(() => ({ paw: true, snout: true, fur: true })))
-
 type ntn = (num: number) => number;
 
 const loopAdd = (upper: number): ntn => compose(modulo(__, upper), add(1));
@@ -51,10 +56,11 @@ const useMusicStore = create<
   GetState<MusicStore>,
   Mutate<StoreApi<MusicStore>, [["zustand/subscribeWithSelector", never]]>
 >(
+  // There are something wrong with zustand's type system, so ignore it temporarily.
   // @ts-ignore
   subscribeWithSelector((set, getter) => ({
     liveItem: null,
-    audio: null,
+    audioData: null,
     playList: null,
     playerState: "stop",
     showList: false,
@@ -84,7 +90,7 @@ const useMusicStore = create<
     },
 
     load: async (item: PlaylistItem) => {
-      let { playList } = getter();
+      let { playList, play } = getter();
       let willPlayItem =
         playList?.find((it) => {
           return item === it;
@@ -97,16 +103,18 @@ const useMusicStore = create<
       set({
         liveItem: item,
         playerState: "loading",
-        audio: null,
-        // downloadingCount: getter().downloadingCount + 1,
       });
 
       // TODO: fix the sequence of async
-      let audio: Howl = await loadMusic(willPlayItem);
+      let audioData: AudioData = {
+        ...(await loadMusic(willPlayItem)),
+        fileName: item.name,
+      };
 
       set({
-        audio,
+        audioData,
       });
+      play();
     },
 
     next: () => {
@@ -143,10 +151,43 @@ const useMusicStore = create<
 
 // side Effect in store
 useMusicStore.subscribe(
-  (state) => state.audio,
-  (audio, previousAudio) => {
-    audio?.play();
-    previousAudio?.stop();
+  (state) => state.playerState,
+  (playerState) => {
+    const audio = useMusicStore.getState().audioData?.audio;
+    if (!audio) {
+      return;
+    }
+
+    switch (playerState) {
+      case "play":
+        audio.play();
+        break;
+      case "pause":
+        audio.pause();
+        break;
+      case "loading":
+        audio.stop();
+        break;
+      default:
+        return;
+    }
+  }
+);
+
+useMusicStore.subscribe(
+  (state) => state.audioData,
+  (audioData, previousAudioData) => {
+    if (audioData) {
+      let audio = audioData.audio;
+      audio.on("end", function () {
+        audio.off("end");
+        audio.off("load");
+        useMusicStore.getState().next();
+      });
+    }
+
+    // clear side effect from previous state
+    previousAudioData?.audio.stop();
   }
 );
 

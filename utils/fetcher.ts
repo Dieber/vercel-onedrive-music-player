@@ -1,10 +1,6 @@
-// import Url from "url-parse";
-// import { message } from "antd";
-// import { baseRequestUrl, ed, platformNo } from "../config";
-// import useTokenStore from "../data/useTokenStore";
-// import Router from "next/router";
-
 import axios from "axios";
+
+// there are something may be intercepted..
 
 const get = axios.get;
 const fetcher = (...args: Parameters<typeof axios.get>) => {

@@ -2,19 +2,21 @@ import { useEffect, useState } from "react";
 import useMusicStore from "../../store/useMusicStore";
 
 const StatusBar: React.FC = () => {
-  let { playerState, audio } = useMusicStore();
-  let { pause, play } = useMusicStore();
+  let { audioData } = useMusicStore();
 
   let [currentTime, setCurrentTime] = useState<number | null>(null);
   let [totalTime, setTotalTime] = useState<number | null>(null);
 
   // when audio is loaded
   useEffect(() => {
-    if (!audio) {
+    if (!audioData) {
       return;
     }
 
-    setTotalTime(audio.duration());
+    let audio = audioData.audio;
+
+    setTotalTime(audioData.audio.duration());
+
     let raf = () => {
       if (audio) {
         setCurrentTime(audio.seek());
@@ -23,33 +25,21 @@ const StatusBar: React.FC = () => {
     };
 
     let id = requestAnimationFrame(raf);
-
     return () => {
       cancelAnimationFrame(id);
     };
-  }, [audio]);
-
-  useEffect(() => {
-    if (!audio) {
-      return;
-    }
-
-    switch (playerState) {
-      case "play":
-        audio.play();
-        break;
-      case "pause":
-        audio.pause();
-        break;
-      default:
-        return;
-    }
-  }, [playerState, audio]);
+  }, [audioData]);
 
   return (
-    <div className="status-bar p-24 flex w-full justify-between text-5xl text-cyan-50 font-bold">
-      <div>{currentTime?.toFixed(2) || "--:--"}</div>
-      <div>{totalTime?.toFixed(2) || "--:--"}</div>
+    <div className="status-bar p-24 flex w-full justify-between text-3xl text-cyan-50 font-bold">
+      <div className="w-[200px]">{currentTime?.toFixed(2) || "--:--"}</div>
+      <div className="text-2xl my-2">
+        {" "}
+        {audioData?.title || audioData?.fileName || ""}
+      </div>
+      <div className="w-[200px] text-right">
+        {totalTime?.toFixed(2) || "--:--"}
+      </div>
     </div>
   );
 };
