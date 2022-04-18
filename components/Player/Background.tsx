@@ -88,7 +88,7 @@ const Background: React.FC = ({ children }) => {
 
   return (
     <div className="w-full h-full relative">
-      <div className={`w-full h-full ${ThemeMap[theme]}`}></div>
+      <div className={`w-full h-full ${ThemeMap["spring"]}`}></div>
       {!isNil(progress) && (
         <div
           className="absolute top-0 left-0"
