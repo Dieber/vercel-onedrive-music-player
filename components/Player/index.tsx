@@ -23,9 +23,9 @@ interface Props {
 }
 
 const Player: React.FC<Props> = () => {
-  let { audioData } = useMusicStore();
+  const { audioData } = useMusicStore();
 
-  let { innerHeight, innerWidth } = useWindowInfo();
+  const { innerHeight, innerWidth } = useWindowInfo();
 
   return (
     <Background>

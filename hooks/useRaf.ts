@@ -2,11 +2,11 @@
 
 // const useRaf = (fn: () => void, deps: Array<string>) => {
 //   useEffect(() => {
-//     let raf = () => {
+//     const raf = () => {
 //       fn();
 //       requestAnimationFrame(raf);
 //     };
-//     let id = requestAnimationFrame(raf);
+//     const id = requestAnimationFrame(raf);
 //     return () => {
 //       cancelAnimationFrame(id);
 //     };

@@ -1,26 +1,37 @@
 # \[WIP\]Vercel Onedrive Music Player
 
-This is a Onedrive based music player, still work in progess.
+This is a onedrive-based music player, still work in progess.
+
+This repository is exposed for testing, so please don't try it.
 
 ## Usage
 
-Deploy with Vercel by your self..
+The most common scenario is that music in your favourate list always be taken down by Apps, even if you subscribed the music services for a fee. So, you can upload your music to your Onedrive, and then open this webapp from any devices which have a broswer. All you have to do is fork this repo and deploy it to the vercel.
+
+inspired by [link](https://github.com/spencerwooo/onedrive-vercel-index).
 
 ## Features
 
 - Responsive Web Design
 - Onedrive API support
-- Run in all devices with an explorer
 - caching music with IndexedDB
 - Progress Web App (Can be added to homescreen)
 - Visulazation
 
-## Todo
+# Bugs
 
-- Run in offline compeletely
+- iOS 15 will suspend the audio when Safari switch to background.([link](https://bugs.webkit.org/show_bug.cgi?id=237878#c7))
+
+## WIP
+
+- Placeholder for music without album art
+- Downloading Progress bar
+- i18n supports
+- Working well in offline mode
 - 3D Visulazation
 - Lyric support
-- Sound effect
+- Better design
+- Sound effects
 
 ## Getting Started
 

@@ -24,7 +24,7 @@ const getBlobFromTagsData = (pictureData: PictureData | null) => {
 };
 
 const readTags = (arrayBuffer: ArrayBuffer) => {
-  let blob = new Blob([arrayBuffer]);
+  const blob = new Blob([arrayBuffer]);
 
   return new Promise((resolve, reject) => {
     jsmediatags.read(blob, {
@@ -38,15 +38,13 @@ const readTags = (arrayBuffer: ArrayBuffer) => {
   });
 };
 
-//
-
 type AudioDataWithoutFileName = Omit<AudioData, "fileName">;
 
 const loadMusic = (willPlayItem: PlaylistItem) => {
   return new Promise<AudioDataWithoutFileName>(async (resolve) => {
     let blob: Blob;
     let newArrayBuffer;
-    let arrayBuffer = await get(willPlayItem.id);
+    const arrayBuffer = await get(willPlayItem.id);
 
     // get music from url or IndexedDB
     if (arrayBuffer) {
@@ -61,18 +59,18 @@ const loadMusic = (willPlayItem: PlaylistItem) => {
         return new Blob([res.data], { type: "audio/mpeg" });
       });
     }
-    let finalAB = arrayBuffer || newArrayBuffer;
+    const finalAB = arrayBuffer || newArrayBuffer;
 
     // get metadata of music from array buffer
-    let tagsResult: any = await readTags(finalAB);
-    let audioData = {
+    const tagsResult: any = await readTags(finalAB);
+    const audioData = {
       title: tagsResult?.tags?.title,
       cover: getBlobFromTagsData(tagsResult?.tags?.picture ?? null),
       artist: tagsResult?.tags?.artist,
     };
 
-    let url = URL.createObjectURL(blob);
-    let audio = new Howl({
+    const url = URL.createObjectURL(blob);
+    const audio = new Howl({
       src: [url],
       format: ["mp3"],
     });

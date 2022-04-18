@@ -65,7 +65,7 @@ const Button: React.FC<ButtonProps> = ({
   children,
   ...props
 }) => {
-  let ThemeButton = ButtonMap[themeName];
+  const ThemeButton = ButtonMap[themeName];
 
   return <ThemeButton {...props} style={buttonStyle}></ThemeButton>;
 };

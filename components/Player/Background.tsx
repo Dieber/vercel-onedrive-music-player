@@ -46,20 +46,17 @@ const Background: React.FC = ({ children }) => {
       return;
     }
 
-    let { audio } = audioData;
+    const { audio } = audioData;
 
-    let ctx = canvasRef.current.getContext("2d")!;
+    const ctx = canvasRef.current.getContext("2d")!;
 
-    let analyser = Howler.ctx.createAnalyser();
+    const analyser = Howler.ctx.createAnalyser();
     Howler.masterGain.connect(analyser);
-    canvasRef.current.width = window.innerWidth;
-    canvasRef.current.height = window.innerHeight;
 
-    let raf = () => {
+    const raf = () => {
       if (audio) {
         // progress bar
         setProgress(audio.seek() / audio.duration());
-        // canvas ctx
 
         if (ctx) {
           drawFFTinCanvas(
@@ -76,7 +73,7 @@ const Background: React.FC = ({ children }) => {
       }
     };
 
-    let id = requestAnimationFrame(raf);
+    const id = requestAnimationFrame(raf);
 
     return () => {
       if (!audio) {

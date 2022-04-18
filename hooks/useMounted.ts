@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 
 const useMounted = () => {
-  let [mounted, setMounted] = useState(false);
+  const [mounted, setMounted] = useState(false);
   useEffect(() => {
     setMounted(true);
   }, []);

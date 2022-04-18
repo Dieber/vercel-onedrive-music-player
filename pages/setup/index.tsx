@@ -61,7 +61,7 @@ const RedisInfo = () => {
 };
 
 export default function Step1() {
-  let { data } = useSWR<CheckIfRedisAvaliableResponse>(
+  const { data } = useSWR<CheckIfRedisAvaliableResponse>(
     "/api/checkIfRedisAvaliable"
   );
 
