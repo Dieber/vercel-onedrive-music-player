@@ -1,35 +1,28 @@
-import { forwardRef, HTMLAttributes, useEffect } from "react";
+import { forwardRef, useEffect } from "react";
 
-const Canvas: React.FunctionComponent<{
-  canvasWidth: number,
-  canvasHeight: number
-}> = forwardRef<HTMLCanvasElement>((props, ref) => {
+interface CanvasProps extends React.HTMLProps<HTMLCanvasElement> {
+  canvasWidth: number;
+  canvasHeight: number;
+}
 
-
-  let 
-
-  useEffect(() => {
-
-  }, [])
-
-
-  return (
-    <canvas
-      {...props}
-      style={
-        {
-          width: props.canvasWidth,
-          width: props.canvasHeight,
-          
-        }
-      }
-
-      className="absolute top-0 left-0"
-      id="visualization"
-      ref={ref}
-    ></canvas>
-  );
-});
+const Canvas = forwardRef<HTMLCanvasElement, CanvasProps>(
+  ({ canvasWidth, canvasHeight, ...props }, ref) => {
+    return (
+      <canvas
+        {...props}
+        style={{
+          width: canvasWidth,
+          height: canvasHeight,
+          ...props.style,
+        }}
+        width={canvasWidth}
+        height={canvasHeight}
+        id="visualization"
+        ref={ref}
+      ></canvas>
+    );
+  }
+);
 
 Canvas.displayName = "Canvas";
 

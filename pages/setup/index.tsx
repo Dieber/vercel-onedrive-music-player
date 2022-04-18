@@ -101,7 +101,7 @@ export default function Step1() {
   return (
     <AppLayout>
       <main className="text-white flex justify-center align-middle">
-        <div className="bg-player-bg  w-full sm:w-1/2	 p-8 m-8 rounded-md black ">
+        <div className="bg-player-bg  w-full md:w-2/3 xl:w-1/2 p-8 m-8 rounded-md black ">
           <h1 className="text-3xl"> Welcome to your cloud music</h1>
 
           <p className="my-2 text">

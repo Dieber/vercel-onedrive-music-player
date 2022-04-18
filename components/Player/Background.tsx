@@ -5,6 +5,8 @@ import useThemeStore from "../../store/useThemeStore";
 import { isNil } from "ramda";
 import { ThemeMap } from "../../constant";
 import useMounted from "../../hooks/useMounted";
+import Canvas from "../Basic/Canvas";
+import useWindowInfo from "../../hooks/useWindowInfo";
 
 const drawFFTinCanvas = (
   ctx: CanvasRenderingContext2D,
@@ -15,8 +17,8 @@ const drawFFTinCanvas = (
   ctx.clearRect(0, 0, WIDTH, HEIGHT);
   analyser.fftSize = 256;
   var bufferLength = analyser.frequencyBinCount;
-  var dataArray = new Uint8Array(bufferLength);
 
+  var dataArray = new Uint8Array(bufferLength);
 
   analyser.getByteFrequencyData(dataArray);
   var barWidth = (WIDTH / bufferLength) * 2.5;
@@ -24,11 +26,9 @@ const drawFFTinCanvas = (
   var x = 0;
 
   for (var i = 0; i < bufferLength; i++) {
-    barHeight = dataArray[i] / 2;
-
-    ctx.fillStyle = "rgb(" + (barHeight + HEIGHT) + ",50,50)";
-    ctx.fillRect(x, 400 - barHeight / 2, barWidth, barHeight);
-
+    barHeight = (dataArray[i] / 255) * HEIGHT * 2;
+    ctx.fillStyle = "rgb(255,255,255,.3)";
+    ctx.fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight);
     x += barWidth + 1;
   }
 };
@@ -39,17 +39,12 @@ const Background: React.FC = ({ children }) => {
   const [progress, setProgress] = useState<number | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null!);
 
-
-  const mounted = useMounted()
-
-  
+  const { innerWidth, innerHeight } = useWindowInfo();
 
   useEffect(() => {
     if (!audioData) {
       return;
     }
-
-
 
     let { audio } = audioData;
 
@@ -67,7 +62,12 @@ const Background: React.FC = ({ children }) => {
         // canvas ctx
 
         if (ctx) {
-          drawFFTinCanvas(ctx, analyser, canvasRef.current.width, canvasRef.current.height);
+          drawFFTinCanvas(
+            ctx,
+            analyser,
+            canvasRef.current.width,
+            canvasRef.current.height
+          );
         }
 
         // analyser = Howler.ctx.createAnalyser()
@@ -87,11 +87,11 @@ const Background: React.FC = ({ children }) => {
   }, [audioData]);
 
   return (
-    <>
-      <div className={`w-full h-full relative ${ThemeMap[theme]}`}></div>
+    <div className="w-full h-full relative">
+      <div className={`w-full h-full ${ThemeMap[theme]}`}></div>
       {!isNil(progress) && (
         <div
-          className="absolute top-0 left-0 "
+          className="absolute top-0 left-0"
           style={{
             background: "#fff",
             opacity: ".1",
@@ -100,16 +100,33 @@ const Background: React.FC = ({ children }) => {
           }}
         ></div>
       )}
-      <canvas
-        className="absolute top-0 left-0 w-full h-full"
-        id="visualization"
-        ref={canvasRef}
-      ></canvas>
+      {innerWidth ? (
+        <Canvas
+          // className="w-full h-full"
+          id="visualization"
+          className="absolute top-1/2 left-1/2"
+          style={{
+            transform: "translate(-50%,-50%)",
+          }}
+          ref={canvasRef}
+          canvasWidth={innerWidth > 640 ? 600 : 300}
+          canvasHeight={innerWidth > 640 ? 600 : 300}
+        ></Canvas>
+      ) : (
+        " "
+      )}
 
-      <div className="absolute top-0 left-0" style={{
-        width: 
-      }}>{children}</div>
-    </>
+      <div
+        className="absolute top-0 left-0 w-full h-full"
+        style={
+          {
+            // width:
+          }
+        }
+      >
+        {children}
+      </div>
+    </div>
   );
 };
 
