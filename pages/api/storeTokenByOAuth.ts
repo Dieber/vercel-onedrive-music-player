@@ -29,7 +29,7 @@ export default async function handler(
   params.append("grant_type", "authorization_code");
 
   // Request access token
-  let accessToken = await axios
+  const accessToken = await axios
     .post(authApi, params, {
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",

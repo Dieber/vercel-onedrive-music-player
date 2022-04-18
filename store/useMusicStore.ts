@@ -90,8 +90,8 @@ const useMusicStore = create<
     },
 
     load: async (item: PlaylistItem) => {
-      let { playList, play } = getter();
-      let willPlayItem =
+      const { playList, play } = getter();
+      const willPlayItem =
         playList?.find((it) => {
           return item === it;
         }) ?? null;
@@ -106,7 +106,7 @@ const useMusicStore = create<
       });
 
       // TODO: fix the sequence of async
-      let audioData: AudioData = {
+      const audioData: AudioData = {
         ...(await loadMusic(willPlayItem)),
         fileName: item.name,
       };
@@ -118,26 +118,26 @@ const useMusicStore = create<
     },
 
     next: () => {
-      let { playList, liveItem, load } = getter();
+      const { playList, liveItem, load } = getter();
       if (!playList) {
         return;
       }
-      let index = playList.findIndex((item) => {
+      const index = playList.findIndex((item) => {
         return item === liveItem;
       });
-      let nextIndex = loopAdd(playList.length)(index);
+      const nextIndex = loopAdd(playList.length)(index);
       load(playList[nextIndex]);
     },
 
     prev: () => {
-      let { playList, liveItem, load } = getter();
+      const { playList, liveItem, load } = getter();
       if (!playList) {
         return;
       }
-      let index = playList.findIndex((item) => {
+      const index = playList.findIndex((item) => {
         return item === liveItem;
       });
-      let prevIndex = loopMinus(playList.length)(index);
+      const prevIndex = loopMinus(playList.length)(index);
       load(playList[prevIndex]);
     },
 
@@ -178,7 +178,7 @@ useMusicStore.subscribe(
   (state) => state.audioData,
   (audioData, previousAudioData) => {
     if (audioData) {
-      let audio = audioData.audio;
+      const audio = audioData.audio;
       audio.on("end", function () {
         audio.off("end");
         audio.off("load");

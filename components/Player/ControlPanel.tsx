@@ -9,7 +9,7 @@ const mapIcons = {
 };
 
 const ControlPanel: React.FC = () => {
-  let { playerState, audioData, pause, play, next, prev, setShowList } =
+  const { playerState, audioData, pause, play, next, prev, setShowList } =
     useMusicStore();
 
   return (

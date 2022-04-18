@@ -6,7 +6,7 @@ type WindowInfo = {
 };
 
 const useWindowInfo = () => {
-  let [info, setInfo] = useState<WindowInfo>({
+  const [info, setInfo] = useState<WindowInfo>({
     innerWidth: null,
     innerHeight: null,
   });

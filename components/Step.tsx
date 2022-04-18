@@ -34,7 +34,7 @@ const Step: React.FC<Props> = ({
       }}
     >
       {stepArr.map((_item, index) => {
-        let isActive = activeIndex === index;
+        const isActive = activeIndex === index;
         return (
           <div
             className={`flex justify-center transition-colors duration-200 items-center rounded-full ${

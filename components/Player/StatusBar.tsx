@@ -14,10 +14,10 @@ const convertToClock = (second: number | null) => {
 };
 
 const StatusBar: React.FC = () => {
-  let { audioData } = useMusicStore();
+  const { audioData } = useMusicStore();
 
-  let [currentTime, setCurrentTime] = useState<number | null>(null);
-  let [totalTime, setTotalTime] = useState<number | null>(null);
+  const [currentTime, setCurrentTime] = useState<number | null>(null);
+  const [totalTime, setTotalTime] = useState<number | null>(null);
 
   // when audio is loaded
   useEffect(() => {
@@ -25,18 +25,18 @@ const StatusBar: React.FC = () => {
       return;
     }
 
-    let audio = audioData.audio;
+    const audio = audioData.audio;
 
     setTotalTime(audioData.audio.duration());
 
-    let raf = () => {
+    const raf = () => {
       if (audio) {
         setCurrentTime(audio.seek());
         requestAnimationFrame(raf);
       }
     };
 
-    let id = requestAnimationFrame(raf);
+    const id = requestAnimationFrame(raf);
     return () => {
       cancelAnimationFrame(id);
     };
@@ -45,13 +45,11 @@ const StatusBar: React.FC = () => {
   return (
     <div>
       <div className="status-bar p-4 sm:p-16 flex w-full justify-between items-center text-xl sm:text-3xl text-cyan-50 font-bold">
-        <div className="w-1/4">{convertToClock(currentTime) || "--:--"}</div>
+        <div className="w-1/4">{convertToClock(currentTime)}</div>
         <div className="w-1/2 text-lg text-center sm:text-3xl my-2">
           {audioData?.title || audioData?.fileName || ""}
         </div>
-        <div className="w-1/4 text-right">
-          {convertToClock(totalTime) || "--:--"}
-        </div>
+        <div className="w-1/4 text-right">{convertToClock(totalTime)}</div>
       </div>
     </div>
   );
