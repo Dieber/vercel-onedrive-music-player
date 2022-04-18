@@ -36,3 +36,7 @@ inspired by [spencerwooo's onedrive-vercel-index](https://github.com/spencerwooo
 ## Getting Started
 
 WIP
+
+## License
+
+MIT
