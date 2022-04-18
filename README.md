@@ -1,6 +1,6 @@
 # \[WIP\]Vercel Onedrive Music Player
 
-This is a onedrive-based music player, still work in progess.
+This is a onedrive-based music player, still working in progess.
 
 This repository is exposed for testing, so please don't try it.
 
