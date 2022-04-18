@@ -1,6 +1,6 @@
 # \[WIP\]Vercel Onedrive Music Player
 
-This is a onedrive-based music player, still work in progess.
+This is a onedrive-based music player, still working in progess.
 
 This repository is exposed for testing, so please don't try it.
 
@@ -8,7 +8,7 @@ This repository is exposed for testing, so please don't try it.
 
 The most common scenario is that music in your favourate list always be taken down by Apps, even if you subscribed the music services for a fee. So, you can upload your music to your Onedrive, and then open this webapp from any devices which have a broswer. All you have to do is fork this repo and deploy it to the vercel.
 
-inspired by [link](https://github.com/spencerwooo/onedrive-vercel-index).
+inspired by [spencerwooo's onedrive-vercel-index](https://github.com/spencerwooo/onedrive-vercel-index).
 
 ## Features
 
@@ -36,3 +36,7 @@ inspired by [link](https://github.com/spencerwooo/onedrive-vercel-index).
 ## Getting Started
 
 WIP
+
+## License
+
+MIT
