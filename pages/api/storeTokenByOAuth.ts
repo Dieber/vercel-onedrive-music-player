@@ -20,27 +20,34 @@ export default async function handler(
   const { clientId, redirectUri, authApi, encryptedClientSecret } = apiConfig;
   const clientSecret = decryptToken(encryptedClientSecret);
 
-  const profileApi = apiConfig.driveApi.replace("/drive", "");
-  const userProfile = await axios.get(profileApi, {
-    headers: {
-      Authorization: `Bearer ${req.body.code}`,
-    },
-  });
+  // const profileApi = apiConfig.driveApi.replace("/drive", "");
+  // const userProfile = await axios
+  //   .get(profileApi, {
+  //     headers: {
+  //       Authorization: `Bearer ${req.body.code}`,
+  //     },
+  //   })
+  //   .catch((e) => {
+  //     console.log(e);
+  //     return e;
+  //   });
 
-  if (userProfile.status !== 200) {
-    res.status(403).json({
-      code: 0,
-      msg: `Error,${userProfile.data}`,
-    });
-    return;
-  }
-  if (userProfile.data.userPrincipalName !== apiConfig.userName) {
-    res.status(403).json({
-      code: 0,
-      msg: "Do not pretend to be the host of this website",
-    });
-    return;
-  }
+  // console.log(userProfile);
+
+  // if (userProfile.status !== 200) {
+  //   res.status(403).json({
+  //     code: 0,
+  //     msg: `Error,${userProfile}`,
+  //   });
+  //   return;
+  // }
+  // if (userProfile.data.userPrincipalName !== apiConfig.userName) {
+  //   res.status(403).json({
+  //     code: 0,
+  //     msg: "Do not pretend to be the host of this website",
+  //   });
+  //   return;
+  // }
 
   // Construct URL parameters for OAuth2
   const params = new URLSearchParams();

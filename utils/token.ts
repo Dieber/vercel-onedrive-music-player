@@ -20,6 +20,8 @@ export function generateAuthorisationUrl(): string {
 
 export async function getAuthPersonInfo(accessToken: string) {
   const profileApi = apiConfig.driveApi.replace("/drive", "");
+  console.log(accessToken);
+  console.log(profileApi);
   return get(profileApi, {
     headers: {
       Authorization: `Bearer ${accessToken}`,

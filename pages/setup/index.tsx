@@ -92,6 +92,19 @@ export default function Setup() {
       return;
     }
 
+    const { data, status } = await getAuthPersonInfo(oAuthCode);
+    console.log("shit");
+
+    if (status !== 200) {
+      return;
+    }
+    if (data.userPrincipalName !== apiConfig.userName) {
+      console.log("fuck");
+      return;
+    }
+
+    console.log(oAuthCode);
+
     axios
       .post(`/api/storeTokenByOAuth`, {
         code: oAuthCode,
