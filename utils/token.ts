@@ -26,4 +26,3 @@ export async function getAuthPersonInfo(accessToken: string) {
     },
   });
 }
-e;
