@@ -60,7 +60,7 @@ const RedisInfo = () => {
   );
 };
 
-export default function Step1() {
+export default function Setup() {
   const { data } = useSWR<CheckIfRedisAvaliableResponse>(
     "/api/checkIfRedisAvaliable"
   );
@@ -102,7 +102,15 @@ export default function Step1() {
     <AppLayout>
       <main className="text-white flex justify-center align-middle">
         <div className="bg-player-bg  w-full md:w-2/3 xl:w-1/2 p-8 m-8 rounded-md black ">
-          <h1 className="text-3xl"> Welcome to your cloud music</h1>
+          <h1 className="text-3xl text-center"> Welcome to your cloud music</h1>
+          <div className="my-5 mx-auto w-full flex justify-center">
+            <Image
+              src="/VOMP.png"
+              alt="appIcon"
+              width={256}
+              height={256}
+            ></Image>
+          </div>
 
           <p className="my-2 text">
             {" "}
@@ -119,10 +127,10 @@ export default function Step1() {
                   something is wrong.
                 </p>
                 <ConfigTable></ConfigTable>
-                {/* Step1 */}
+                {/* Setup */}
 
                 <p>
-                  <b>Step1</b>: login your Microsoft account and copy the
+                  <b>Setup</b>: login your Microsoft account and copy the
                   callback url
                 </p>
 

@@ -1,7 +1,9 @@
 const Header = () => {
   return (
     <nav className="fixed h-16 w-full top-0 z-[100] border-b border-gray-900/10 bg-opacity-80 backdrop-blur-md">
-      <div className="text-white">Nazo Cloud Music</div>
+      <div className="text-white text-center h-full flex items-center justify-center text-2xl">
+        Vercel-OMP
+      </div>
     </nav>
   );
 };
