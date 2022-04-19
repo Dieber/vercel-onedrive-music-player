@@ -78,6 +78,8 @@ export default function Setup() {
     "/api/checkIfRedisAvaliable"
   );
 
+  const router = useRouter();
+
   const theme = useThemeStore((state) => state.theme);
   const setTheme = useThemeStore((state) => state.setTheme);
   const [oAuthCodeUrl, setOAuthCodeUrl] = useState("");
@@ -109,6 +111,10 @@ export default function Setup() {
 
   const handleChangeTheme = (theme: Theme) => {
     setTheme(theme);
+  };
+
+  const handleStart = () => {
+    router.push("/");
   };
 
   return (
@@ -217,6 +223,7 @@ export default function Setup() {
                       style={{
                         cursor: allReady ? "pointer" : "not-allowed",
                       }}
+                      onClick={handleStart}
                     >
                       Start →
                     </Button>
