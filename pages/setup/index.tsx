@@ -16,6 +16,7 @@ import { generateAuthorisationUrl, getAuthPersonInfo } from "../../utils/token";
 import { useState } from "react";
 import Button, { ThemeType } from "../../components/Basic/Button";
 import useThemeStore, { Theme } from "../../store/useThemeStore";
+import axios from "axios";
 
 const authUrl = generateAuthorisationUrl();
 
@@ -79,7 +80,6 @@ export default function Setup() {
   );
 
   const router = useRouter();
-
   const theme = useThemeStore((state) => state.theme);
   const setTheme = useThemeStore((state) => state.setTheme);
   const [oAuthCodeUrl, setOAuthCodeUrl] = useState("");
@@ -92,21 +92,16 @@ export default function Setup() {
       return;
     }
 
-    const { data, status } = await getAuthPersonInfo(oAuthCode);
-    if (status !== 200) {
-      return;
-    }
-    if (data.userPrincipalName !== apiConfig.userName) {
-      return;
-    }
-
-    post(`/api/storeTokenByOAuth`, {
-      code: oAuthCode,
-    })
+    axios
+      .post(`/api/storeTokenByOAuth`, {
+        code: oAuthCode,
+      })
       .then((e) => {
         setAllReady(true);
       })
-      .catch((e) => {});
+      .catch((e) => {
+        console.log(e);
+      });
   };
 
   const handleChangeTheme = (theme: Theme) => {

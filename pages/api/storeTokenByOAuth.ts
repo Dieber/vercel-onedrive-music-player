@@ -20,6 +20,28 @@ export default async function handler(
   const { clientId, redirectUri, authApi, encryptedClientSecret } = apiConfig;
   const clientSecret = decryptToken(encryptedClientSecret);
 
+  const profileApi = apiConfig.driveApi.replace("/drive", "");
+  const userProfile = await axios.get(profileApi, {
+    headers: {
+      Authorization: `Bearer ${req.body.code}`,
+    },
+  });
+
+  if (userProfile.status !== 200) {
+    res.status(403).json({
+      code: 0,
+      msg: `Error,${userProfile.data}`,
+    });
+    return;
+  }
+  if (userProfile.data.userPrincipalName !== apiConfig.userName) {
+    res.status(403).json({
+      code: 0,
+      msg: "Do not pretend to be the host of this website",
+    });
+    return;
+  }
+
   // Construct URL parameters for OAuth2
   const params = new URLSearchParams();
   params.append("client_id", clientId);
