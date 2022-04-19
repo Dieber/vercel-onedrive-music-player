@@ -60,17 +60,30 @@ const RedisInfo = () => {
   );
 };
 
+const getCodefromOAuthUrl = (oAuthCodeUrl: string) => {
+  let params;
+  let oAuthCode;
+  try {
+    params = new URL(oAuthCodeUrl).searchParams;
+    oAuthCode = Object.fromEntries(params.entries()).code;
+  } catch (e) {
+    oAuthCode = null;
+  }
+
+  return oAuthCode;
+};
+
 export default function Setup() {
   const { data } = useSWR<CheckIfRedisAvaliableResponse>(
     "/api/checkIfRedisAvaliable"
   );
 
-  const [oAuthCode, setOAuthCode] = useState("");
-
   const theme = useThemeStore((state) => state.theme);
   const setTheme = useThemeStore((state) => state.setTheme);
-
+  const [oAuthCodeUrl, setOAuthCodeUrl] = useState("");
   const [allReady, setAllReady] = useState(false);
+
+  const oAuthCode = getCodefromOAuthUrl(oAuthCodeUrl);
 
   const handleStoreOAuthToken = async () => {
     if (!oAuthCode) {
@@ -153,17 +166,17 @@ export default function Setup() {
                 <div className="w-full flex my-2 items-center">
                   <input
                     className="flex-1 mr-2 px-4 py-2 rounded-lg text-black"
-                    value={oAuthCode}
+                    value={oAuthCodeUrl}
                     placeholder="http://localhost/?code=M.R3_BAY.c0..."
                     onChange={(e) => {
-                      setOAuthCode(e.target.value);
+                      setOAuthCodeUrl(e.target.value);
                     }}
                   ></input>
                   <Button
                     style={{
-                      cursor: oAuthCode ? "pointer" : "not-allowed",
+                      cursor: oAuthCodeUrl ? "pointer" : "not-allowed",
                     }}
-                    // disabled={!oAuthCode}
+                    // disabled={!oAuthCodeUrl}
                     themeName={theme}
                     onClick={handleStoreOAuthToken}
                   >
