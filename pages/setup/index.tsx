@@ -70,6 +70,8 @@ export default function Setup() {
   const theme = useThemeStore((state) => state.theme);
   const setTheme = useThemeStore((state) => state.setTheme);
 
+  const [allReady, setAllReady] = useState(false);
+
   const handleStoreOAuthToken = async () => {
     if (!oAuthCode) {
       return;
@@ -87,11 +89,9 @@ export default function Setup() {
       code: oAuthCode,
     })
       .then((e) => {
-        console.log(e);
+        setAllReady(true);
       })
-      .catch((e) => {
-        console.log("catch", e);
-      });
+      .catch((e) => {});
   };
 
   const handleChangeTheme = (theme: Theme) => {
@@ -160,6 +160,9 @@ export default function Setup() {
                     }}
                   ></input>
                   <Button
+                    style={{
+                      cursor: oAuthCode ? "pointer" : "not-allowed",
+                    }}
                     // disabled={!oAuthCode}
                     themeName={theme}
                     onClick={handleStoreOAuthToken}
@@ -196,7 +199,14 @@ export default function Setup() {
                         );
                       })}
                     </span>
-                    <Button themeName={theme}>Start →</Button>
+                    <Button
+                      themeName={theme}
+                      style={{
+                        cursor: allReady ? "pointer" : "not-allowed",
+                      }}
+                    >
+                      Start →
+                    </Button>
                   </div>
                 </div>
               </>
