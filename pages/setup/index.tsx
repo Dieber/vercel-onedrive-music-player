@@ -60,15 +60,32 @@ const RedisInfo = () => {
   );
 };
 
-export default function Step1() {
+const getCodefromOAuthUrl = (oAuthCodeUrl: string) => {
+  let params;
+  let oAuthCode;
+  try {
+    params = new URL(oAuthCodeUrl).searchParams;
+    oAuthCode = Object.fromEntries(params.entries()).code;
+  } catch (e) {
+    oAuthCode = null;
+  }
+
+  return oAuthCode;
+};
+
+export default function Setup() {
   const { data } = useSWR<CheckIfRedisAvaliableResponse>(
     "/api/checkIfRedisAvaliable"
   );
 
-  const [oAuthCode, setOAuthCode] = useState("");
+  const router = useRouter();
 
   const theme = useThemeStore((state) => state.theme);
   const setTheme = useThemeStore((state) => state.setTheme);
+  const [oAuthCodeUrl, setOAuthCodeUrl] = useState("");
+  const [allReady, setAllReady] = useState(false);
+
+  const oAuthCode = getCodefromOAuthUrl(oAuthCodeUrl);
 
   const handleStoreOAuthToken = async () => {
     if (!oAuthCode) {
@@ -87,22 +104,32 @@ export default function Step1() {
       code: oAuthCode,
     })
       .then((e) => {
-        console.log(e);
+        setAllReady(true);
       })
-      .catch((e) => {
-        console.log("catch", e);
-      });
+      .catch((e) => {});
   };
 
   const handleChangeTheme = (theme: Theme) => {
     setTheme(theme);
   };
 
+  const handleStart = () => {
+    router.push("/");
+  };
+
   return (
     <AppLayout>
       <main className="text-white flex justify-center align-middle">
         <div className="bg-player-bg  w-full md:w-2/3 xl:w-1/2 p-8 m-8 rounded-md black ">
-          <h1 className="text-3xl"> Welcome to your cloud music</h1>
+          <h1 className="text-3xl text-center"> Welcome to your cloud music</h1>
+          <div className="my-5 mx-auto w-full flex justify-center">
+            <Image
+              src="/VOMP.png"
+              alt="appIcon"
+              width={256}
+              height={256}
+            ></Image>
+          </div>
 
           <p className="my-2 text">
             {" "}
@@ -119,10 +146,10 @@ export default function Step1() {
                   something is wrong.
                 </p>
                 <ConfigTable></ConfigTable>
-                {/* Step1 */}
+                {/* Setup */}
 
                 <p>
-                  <b>Step1</b>: login your Microsoft account and copy the
+                  <b>Setup</b>: login your Microsoft account and copy the
                   callback url
                 </p>
 
@@ -145,14 +172,17 @@ export default function Step1() {
                 <div className="w-full flex my-2 items-center">
                   <input
                     className="flex-1 mr-2 px-4 py-2 rounded-lg text-black"
-                    value={oAuthCode}
+                    value={oAuthCodeUrl}
                     placeholder="http://localhost/?code=M.R3_BAY.c0..."
                     onChange={(e) => {
-                      setOAuthCode(e.target.value);
+                      setOAuthCodeUrl(e.target.value);
                     }}
                   ></input>
                   <Button
-                    // disabled={!oAuthCode}
+                    style={{
+                      cursor: oAuthCodeUrl ? "pointer" : "not-allowed",
+                    }}
+                    // disabled={!oAuthCodeUrl}
                     themeName={theme}
                     onClick={handleStoreOAuthToken}
                   >
@@ -188,7 +218,15 @@ export default function Step1() {
                         );
                       })}
                     </span>
-                    <Button themeName={theme}>Start →</Button>
+                    <Button
+                      themeName={theme}
+                      style={{
+                        cursor: allReady ? "pointer" : "not-allowed",
+                      }}
+                      onClick={handleStart}
+                    >
+                      Start →
+                    </Button>
                   </div>
                 </div>
               </>
